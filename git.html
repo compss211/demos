@@ -624,9 +624,10 @@
         <h4>Pull Request workflow:</h4>
         <p>Developers work independently on feature branches → Create pull requests → Team reviews code → Approved changes merge to main branch</p>
       </div>
+      <button class="btn btn-primary" onclick="showSummary()" style="margin-top: 20px;">Next: Summary →</button>
     </div>
 
-    <div class="intro">
+    <div class="intro" id="summary-stage" style="display: none;">
       <h2>Summary</h2>
       <p>You've now experienced the complete Git and GitHub workflow through interactive demonstrations:</p>
       <ul style="margin: 12px 0; padding-left: 20px;">
@@ -1180,6 +1181,11 @@ function showBranches() {
 function showCollaboration() {
   document.getElementById('collaboration-stage').style.display = 'block';
   document.getElementById('collaboration-stage').scrollIntoView({ behavior: 'smooth' });
+}
+
+function showSummary() {
+  document.getElementById('summary-stage').style.display = 'block';
+  document.getElementById('summary-stage').scrollIntoView({ behavior: 'smooth' });
 }
 
 function generateHash() {
