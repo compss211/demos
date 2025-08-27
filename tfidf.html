@@ -144,12 +144,99 @@
                 <div class="doc-title">Document 3: Mixed</div>
                 <div class="doc-content">The computer helps analyze forest data. Systems monitor tree growth.</div>
             </div>
-            <button class="btn btn-primary" onclick="showCalculator()" style="margin-top: 20px;">Next: Try the Calculator →</button>
+            <button class="btn btn-primary" onclick="showTermFrequencies()" style="margin-top: 20px;">Next: Understanding Term Frequencies →</button>
+        </div>
+        
+        <!-- Term Frequencies Section -->
+        <div class="stage" id="term-freq-stage" style="display: none;">
+            <h2>Understanding Term Frequencies</h2>
+            <div class="explanation">
+                Before we dive into TF-IDF, let's understand the first component: <strong>Term Frequency (TF)</strong>. This measures how often a word appears in a specific document relative to the total number of words in that document.
+            </div>
+            
+            <div class="controls-section">
+                <div class="control-group">
+                    <label class="control-label" for="tfWordSelect">Select a word to analyze:</label>
+                    <select id="tfWordSelect">
+                        <option value="">Choose a word...</option>
+                        <option value="computer">computer</option>
+                        <option value="the">the</option>
+                        <option value="forest">forest</option>
+                        <option value="data">data</option>
+                        <option value="trees">trees</option>
+                        <option value="systems">systems</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label" for="tfDocSelect">Select a document:</label>
+                    <select id="tfDocSelect">
+                        <option value="1">Document 1: Technology</option>
+                        <option value="2">Document 2: Nature</option>
+                        <option value="3">Document 3: Mixed</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="calculations-section" id="tf-calculations" style="display: none;">
+                <div class="calc-card">
+                    <div class="calc-title">Word Count</div>
+                    <div class="calc-formula">Number of times the word appears in the document</div>
+                    <div class="calc-value" id="wordCountValue">0</div>
+                    <div class="calc-explanation" id="wordCountExplanation"></div>
+                </div>
+                
+                <div class="calc-card">
+                    <div class="calc-title">Total Words</div>
+                    <div class="calc-formula">Total number of words in the document</div>
+                    <div class="calc-value" id="totalWordsValue">0</div>
+                    <div class="calc-explanation" id="totalWordsExplanation"></div>
+                </div>
+                
+                <div class="calc-card">
+                    <div class="calc-title">Term Frequency</div>
+                    <div class="calc-formula">TF = Word Count / Total Words</div>
+                    <div class="calc-value" id="simpleTefrValue" style="color: var(--blue);">0</div>
+                    <div class="calc-explanation">Frequency of this term in this document</div>
+                </div>
+            </div>
+            
+            <div id="tf-comparison" style="display: none;">
+                <h3 style="margin-bottom: 15px; color: var(--blue);">Term Frequencies Across All Documents</h3>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Document</th>
+                            <th>Word Count</th>
+                            <th>Total Words</th>
+                            <th>Term Frequency</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tfTableBody">
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="explanation-box" id="tf-explanation" style="display: none;">
+                <h3>Understanding Term Frequency</h3>
+                <div id="tfDynamicExplanation"></div>
+                
+                <div class="formula-breakdown">
+                    <strong>Key Insights:</strong>
+                    <ul style="margin-top: 10px; margin-left: 20px;">
+                        <li>Term Frequency shows how important a word is within a single document</li>
+                        <li>Higher frequencies suggest the word is more central to that document's topic</li>
+                        <li>TF values range from 0 (word doesn't appear) to 1 (word appears in every position)</li>
+                    </ul>
+                    <p style="margin-top: 15px;"><strong>Limitation:</strong> Term Frequency alone has a problem - common words like "the" appear frequently but may not be very meaningful for understanding document content. This is why TF-IDF is useful: it balances term frequency with how rare or common a word is across all documents.</p>
+                </div>
+                <button class="btn btn-primary" onclick="showCalculator()" style="margin-top: 20px;">Next: Full TF-IDF Calculator →</button>
+            </div>
         </div>
         
         <div class="controls-section" id="calculator-stage" style="display: none;">
             <div class="control-group">
-                <label class="control-label" for="wordSelect">🔤 Select a word to analyze:</label>
+                <label class="control-label" for="wordSelect">Select a word to analyze:</label>
                 <select id="wordSelect">
                     <option value="">Choose a word...</option>
                     <option value="computer">computer</option>
@@ -162,7 +249,7 @@
             </div>
             
             <div class="control-group">
-                <label class="control-label" for="docSelect">📄 Select a document:</label>
+                <label class="control-label" for="docSelect">Select a document:</label>
                 <select id="docSelect">
                     <option value="1">Document 1: Technology</option>
                     <option value="2">Document 2: Nature</option>
@@ -173,21 +260,21 @@
         
         <div class="calculations-section" id="calculations" style="display: none;">
             <div class="calc-card">
-                <div class="calc-title">📊 Term Frequency (TF)</div>
+                <div class="calc-title">Term Frequency (TF)</div>
                 <div class="calc-formula">TF = (Count of term in doc) / (Total terms in doc)</div>
                 <div class="calc-value" id="tfValue">0</div>
                 <div class="calc-explanation" id="tfExplanation"></div>
             </div>
             
             <div class="calc-card">
-                <div class="calc-title">📈 Inverse Document Frequency (IDF)</div>
+                <div class="calc-title">Inverse Document Frequency (IDF)</div>
                 <div class="calc-formula">IDF = log(Total docs / Docs with term)</div>
                 <div class="calc-value" id="idfValue">0</div>
                 <div class="calc-explanation" id="idfExplanation"></div>
             </div>
             
             <div class="calc-card">
-                <div class="calc-title">🎯 TF-IDF Score</div>
+                <div class="calc-title">TF-IDF Score</div>
                 <div class="calc-formula">TF-IDF = TF × IDF</div>
                 <div class="calc-value" id="tfidfValue" style="color: #764ba2;">0</div>
                 <div class="calc-explanation">Final importance score for this term in this document</div>
@@ -195,7 +282,7 @@
         </div>
         
         <div id="comparisonTable" style="display: none;">
-            <h3 style="margin-bottom: 15px; color: var(--blue);">📋 TF-IDF Scores Across All Documents</h3>
+            <h3 style="margin-bottom: 15px; color: var(--blue);">TF-IDF Scores Across All Documents</h3>
             <table class="results-table">
                 <thead>
                     <tr>
@@ -404,6 +491,11 @@
             document.getElementById('documents-stage').scrollIntoView({ behavior: 'smooth' });
         }
         
+        function showTermFrequencies() {
+            document.getElementById('term-freq-stage').style.display = 'block';
+            document.getElementById('term-freq-stage').scrollIntoView({ behavior: 'smooth' });
+        }
+        
         function showCalculator() {
             document.getElementById('calculator-stage').style.display = 'block';
             document.getElementById('calculator-stage').scrollIntoView({ behavior: 'smooth' });
@@ -412,6 +504,117 @@
         function showSummarySection() {
             document.getElementById('summary-stage').style.display = 'block';
             document.getElementById('summary-stage').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function updateTermFrequencies() {
+            const selectedWord = document.getElementById('tfWordSelect').value;
+            const selectedDoc = document.getElementById('tfDocSelect').value;
+            
+            if (!selectedWord) {
+                document.getElementById('tf-calculations').style.display = 'none';
+                document.getElementById('tf-comparison').style.display = 'none';
+                document.getElementById('tf-explanation').style.display = 'none';
+                return;
+            }
+            
+            // Show calculations
+            document.getElementById('tf-calculations').style.display = 'grid';
+            
+            // Calculate values for selected document
+            const wordCount = countTermInDoc(selectedWord, selectedDoc);
+            const totalWords = documents[selectedDoc].words.length;
+            const tf = calculateTF(selectedWord, selectedDoc);
+            
+            // Update display
+            document.getElementById('wordCountValue').textContent = wordCount;
+            document.getElementById('totalWordsValue').textContent = totalWords;
+            document.getElementById('simpleTefrValue').textContent = tf.toFixed(3);
+            
+            // Update explanations
+            document.getElementById('wordCountExplanation').textContent = `"${selectedWord}" appears ${wordCount} time(s) in Document ${selectedDoc}`;
+            document.getElementById('totalWordsExplanation').textContent = `Document ${selectedDoc} contains ${totalWords} words total`;
+            
+            // Show comparison table
+            document.getElementById('tf-comparison').style.display = 'block';
+            updateTermFrequencyTable(selectedWord);
+            
+            // Show explanation
+            document.getElementById('tf-explanation').style.display = 'block';
+            updateTermFrequencyExplanation(selectedWord, selectedDoc);
+            
+            // Highlight words in documents
+            highlightTermFrequencyWords(selectedWord);
+        }
+        
+        function updateTermFrequencyTable(word) {
+            const tableBody = document.getElementById('tfTableBody');
+            tableBody.innerHTML = '';
+            
+            for (let docId = 1; docId <= 3; docId++) {
+                const wordCount = countTermInDoc(word, docId);
+                const totalWords = documents[docId].words.length;
+                const tf = calculateTF(word, docId);
+                
+                const row = tableBody.insertRow();
+                row.insertCell(0).textContent = `Document ${docId}: ${documents[docId].title}`;
+                row.insertCell(1).textContent = wordCount;
+                row.insertCell(2).textContent = totalWords;
+                row.insertCell(3).textContent = tf.toFixed(3);
+            }
+        }
+        
+        function updateTermFrequencyExplanation(word, docId) {
+            const wordCount = countTermInDoc(word, docId);
+            const tf = calculateTF(word, docId);
+            
+            let explanation = `<p><strong>Analysis for "${word}" in Document ${docId}:</strong></p>`;
+            
+            if (wordCount === 0) {
+                explanation += `<p>The word "${word}" does not appear in Document ${docId}, so its term frequency is 0.</p>`;
+            } else if (wordCount === 1) {
+                explanation += `<p>The word "${word}" appears once in Document ${docId}. With ${documents[docId].words.length} total words, its frequency is ${tf.toFixed(3)} (${(tf * 100).toFixed(1)}%).</p>`;
+            } else {
+                explanation += `<p>The word "${word}" appears ${wordCount} times in Document ${docId}. With ${documents[docId].words.length} total words, its frequency is ${tf.toFixed(3)} (${(tf * 100).toFixed(1)}%).</p>`;
+            }
+            
+            // Compare across documents
+            const allTFs = [];
+            for (let i = 1; i <= 3; i++) {
+                allTFs.push(calculateTF(word, i));
+            }
+            const maxTF = Math.max(...allTFs);
+            const maxDoc = allTFs.indexOf(maxTF) + 1;
+            
+            if (maxTF > 0) {
+                explanation += `<p><strong>Cross-document comparison:</strong> "${word}" has the highest frequency in Document ${maxDoc} (${maxTF.toFixed(3)}), making it most relevant to that document's topic.</p>`;
+            }
+            
+            document.getElementById('tfDynamicExplanation').innerHTML = explanation;
+        }
+        
+        function highlightTermFrequencyWords(selectedWord) {
+            // Reset all highlights
+            for (let docId = 1; docId <= 3; docId++) {
+                const docElement = document.getElementById(`doc${docId}`);
+                docElement.classList.remove('highlight');
+                const content = documents[docId].content;
+                docElement.querySelector('.doc-content').innerHTML = content;
+            }
+            
+            if (!selectedWord) return;
+            
+            // Highlight selected word in all documents
+            for (let docId = 1; docId <= 3; docId++) {
+                const docElement = document.getElementById(`doc${docId}`);
+                const content = documents[docId].content;
+                const regex = new RegExp(`\\b(${selectedWord}s?|${selectedWord.slice(0, -1)}s?)\\b`, 'gi');
+                const highlightedContent = content.replace(regex, '<span class="word-highlight">$1</span>');
+                docElement.querySelector('.doc-content').innerHTML = highlightedContent;
+                
+                if (countTermInDoc(selectedWord, docId) > 0) {
+                    docElement.classList.add('highlight');
+                }
+            }
         }
         
         // Event listeners
@@ -423,6 +626,15 @@
         document.getElementById('docSelect').addEventListener('change', () => {
             highlightWords();
             updateCalculations();
+        });
+        
+        // Term frequency event listeners
+        document.getElementById('tfWordSelect').addEventListener('change', () => {
+            updateTermFrequencies();
+        });
+        
+        document.getElementById('tfDocSelect').addEventListener('change', () => {
+            updateTermFrequencies();
         });
         
         // Initialize

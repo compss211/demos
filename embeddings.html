@@ -163,6 +163,12 @@
   .vocab-summary{margin-top:12px; padding:12px; background:rgba(13,110,253,.05); border-radius:8px; border:1px solid rgba(13,110,253,.2);}
   .vocab-list{display:flex; flex-wrap:wrap; gap:4px; margin-top:8px;}
   .vocab-word{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas; font-size:12px; padding:4px 8px; background:var(--bg); border:1px solid var(--border); border-radius:4px;}
+  
+  /* Animation for success message */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 </style>
 </head>
 <body>
@@ -173,9 +179,309 @@
     <h1>How Computers Learn Word Meanings</h1>
     <p class="lead">Interactive demonstration of word embeddings and context-based learning</p>
 
-    <div class="intro">
+    <!-- NEW: Interactive Coordinate Exercise -->
+    <div class="intro" id="coordinate-exercise">
+      <h2>Human Embeddings</h2>
+      <p>Before we dive into complex models, let's try something simpler. Look at this plot and tell me: where are "chicken" and "king"?</p>
+      
+      <div style="display: flex; gap: 20px; margin: 20px 0; flex-wrap: wrap;">
+        <!-- Left: Input Panel -->
+        <div style="flex: 1; min-width: 300px;">
+          <h3 style="color: var(--blue); margin-bottom: 12px;">What are the X₁ and X₂ coordinates?</h3>
+          <p style="font-size: 14px; color: var(--muted); margin-bottom: 16px;">
+            Look at the plot on the right. Where are "chicken" and "king" on this coordinate system?
+          </p>
+          
+          <div style="background: var(--panel); padding: 16px; border-radius: 8px; margin-bottom: 12px;">
+            <div style="margin-bottom: 12px;">
+              <label style="font-weight: 600; color: var(--text); display: block; margin-bottom: 4px;">chicken</label>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <label style="font-size: 14px; width: 30px;">X₁:</label>
+                <input type="number" id="chicken-x" min="0" max="6" step="0.1" placeholder="3.5" style="width: 80px; padding: 6px;">
+                <label style="font-size: 14px; width: 30px; margin-left: 8px;">X₂:</label>
+                <input type="number" id="chicken-y" min="0" max="6" step="0.1" placeholder="2.0" style="width: 80px; padding: 6px;">
+              </div>
+            </div>
+            
+            <div>
+              <label style="font-weight: 600; color: var(--text); display: block; margin-bottom: 4px;">king</label>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <label style="font-size: 14px; width: 30px;">X₁:</label>
+                <input type="number" id="king-x" min="0" max="6" step="0.1" placeholder="1.0" style="width: 80px; padding: 6px;">
+                <label style="font-size: 14px; width: 30px; margin-left: 8px;">X₂:</label>
+                <input type="number" id="king-y" min="0" max="6" step="0.1" placeholder="5.0" style="width: 80px; padding: 6px;">
+              </div>
+            </div>
+          </div>
+          
+          <button class="btn btn-primary" onclick="checkCoordinates()" style="width: 100%;">Check My Answer</button>
+          
+          <div id="coordinate-feedback" style="margin-top: 12px; padding: 12px; border-radius: 8px; display: none;"></div>
+        </div>
+        
+        <!-- Right: Plot -->
+        <div style="flex: 1; min-width: 300px;">
+          <h3 style="color: var(--blue); margin-bottom: 12px;">Word Embedding Space</h3>
+          <div style="position: relative; background: white; border: 2px solid var(--border); border-radius: 8px; aspect-ratio: 1;">
+            <svg id="coordinate-plot" viewBox="0 0 400 400" style="width: 100%; height: 100%;">
+              <!-- Grid lines -->
+              <g id="grid-lines" stroke="#e5e7eb" stroke-width="0.5">
+                <!-- Vertical lines -->
+                <line x1="67" y1="0" x2="67" y2="400" />
+                <line x1="133" y1="0" x2="133" y2="400" />
+                <line x1="200" y1="0" x2="200" y2="400" />
+                <line x1="267" y1="0" x2="267" y2="400" />
+                <line x1="333" y1="0" x2="333" y2="400" />
+                <!-- Horizontal lines -->
+                <line x1="0" y1="67" x2="400" y2="67" />
+                <line x1="0" y1="133" x2="400" y2="133" />
+                <line x1="0" y1="200" x2="400" y2="200" />
+                <line x1="0" y1="267" x2="400" y2="267" />
+                <line x1="0" y1="333" x2="400" y2="333" />
+              </g>
+              
+              <!-- Axes -->
+              <line x1="0" y1="400" x2="400" y2="400" stroke="#374151" stroke-width="2" />
+              <line x1="0" y1="0" x2="0" y2="400" stroke="#374151" stroke-width="2" />
+              
+              <!-- Axis labels -->
+              <text x="380" y="395" text-anchor="middle" font-size="14" font-weight="bold">X₁</text>
+              <text x="10" y="15" text-anchor="start" font-size="14" font-weight="bold">X₂</text>
+              
+              <!-- Tick labels -->
+              <text x="67" y="395" text-anchor="middle" font-size="10" fill="#6b7280">1.0</text>
+              <text x="200" y="395" text-anchor="middle" font-size="10" fill="#6b7280">3.5</text>
+              <text x="333" y="395" text-anchor="middle" font-size="10" fill="#6b7280">5.5</text>
+              <text x="5" y="340" text-anchor="start" font-size="10" fill="#6b7280">2.0</text>
+              <text x="5" y="207" text-anchor="start" font-size="10" fill="#6b7280">3.0</text>
+              <text x="5" y="74" text-anchor="start" font-size="10" fill="#6b7280">5.0</text>
+              
+              <!-- Pre-plotted words with labels -->
+              <g id="existing-words">
+                <!-- Top row: king (1.0, 5.0), monarch (3.5, 5.0), queen (5.5, 5.0) -->
+                <circle cx="67" cy="67" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="67" y="57" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">king</text>
+                
+                <circle cx="200" cy="67" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="200" y="57" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">monarch</text>
+                
+                <circle cx="333" cy="67" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="333" y="57" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">queen</text>
+                
+                <!-- Middle row: man (1.0, 3.0), person (3.5, 3.0), woman (5.5, 3.0) -->
+                <circle cx="67" cy="200" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="67" y="190" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">man</text>
+                
+                <circle cx="200" cy="200" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="200" y="190" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">person</text>
+                
+                <circle cx="333" cy="200" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="333" y="190" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">woman</text>
+                
+                <!-- Bottom row: rooster (1.0, 2.0), chicken (3.5, 2.0), hen (5.5, 2.0) -->
+                <circle cx="67" cy="267" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="67" y="257" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">rooster</text>
+                
+                <circle cx="200" cy="267" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="200" y="257" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">chicken</text>
+                
+                <circle cx="333" cy="267" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="333" y="257" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">hen</text>
+              </g>
+              
+              <!-- Placeholder circles for user answers (these will be invisible since all words are shown) -->
+              <g id="user-words" style="display: none;">
+                <circle id="chicken-circle" r="8" fill="#f59e0b" stroke="white" stroke-width="2" opacity="0.8" />
+                <text id="chicken-label" text-anchor="middle" font-size="12" font-weight="bold" fill="#f59e0b">chicken</text>
+                
+                <circle id="king-circle" r="8" fill="#ef4444" stroke="white" stroke-width="2" opacity="0.8" />
+                <text id="king-label" text-anchor="middle" font-size="12" font-weight="bold" fill="#ef4444">king</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+      
+      <div id="exercise-success" style="display: none; background: rgba(34, 197, 94, 0.1); border: 2px solid #22c55e; border-radius: 12px; padding: 20px; margin-top: 20px;">
+        <h3 style="color: #22c55e; margin: 0 0 8px;">Congratulations, you just did text embeddings!</h3>
+        <p style="font-size: 16px; margin: 8px 0;">You just converted words into numbers! <strong>chicken = (3.5, 2.0)</strong> and <strong>king = (1.0, 5.0)</strong>.</p>
+        <p style="font-size: 14px; color: var(--muted); margin: 8px 0;">These coordinate pairs are called "embeddings" - they capture word meaning as numbers that computers can work with. Notice how similar words are close together in this space.</p>
+        <button class="btn btn-primary" onclick="showDimensions()" style="margin-top: 12px;">Next: Understanding the Dimensions →</button>
+      </div>
+    </div>
+
+    <div class="intro" id="dimensions-explanation" style="display: none;">
+      <h2>Understanding Meaning Dimensions</h2>
+      <p>Each coordinate axis represents a <strong>meaning dimension</strong> - a continuous feature that tells us something about the word's meaning.</p>
+      
+      <div style="display: flex; gap: 20px; margin: 20px 0; flex-wrap: wrap;">
+        <!-- Left: Text explanation -->
+        <div style="flex: 1; min-width: 300px;">
+          <div style="background: var(--panel); padding: 20px; border-radius: 12px; margin-bottom: 16px;">
+            <h3 style="color: var(--blue); margin: 0 0 16px;">We want to represent words with a <em>number of continuous features</em> which <strong>tell us something about the meaning of the words</strong></h3>
+            <p style="margin: 16px 0; font-size: 18px; font-style: italic;">i.e. an embedding vector</p>
+          </div>
+          
+          <div style="background: rgba(59, 130, 246, 0.1); border-left: 4px solid #3b82f6; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="color: #3b82f6; margin: 0 0 12px; font-size: 16px;">X₂ Axis: Power/Status Dimension</h4>
+            <div style="display: flex; align-items: center; gap: 8px; margin: 8px 0;">
+              <div style="color: #3b82f6; font-weight: bold;">↑</div>
+              <span style="color: #3b82f6; font-weight: 600;">More power</span>
+              <span style="color: var(--muted); font-size: 14px;">(royalty: king, queen, monarch)</span>
+            </div>
+            <div style="margin: 8px 0; padding-left: 24px;">
+              <span style="color: var(--muted);">Legal importance dimension?</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; margin: 8px 0;">
+              <div style="color: #3b82f6; font-weight: bold;">↓</div>
+              <span style="color: #3b82f6; font-weight: 600;">Less power</span>
+              <span style="color: var(--muted); font-size: 14px;">(animals: rooster, chicken, hen)</span>
+            </div>
+          </div>
+          
+          <div style="background: rgba(249, 115, 22, 0.1); border-left: 4px solid #f97316; padding: 16px; border-radius: 8px;">
+            <h4 style="color: #f97316; margin: 0 0 12px; font-size: 16px;">X₁ Axis: Gender Dimension</h4>
+            <div style="display: flex; align-items: center; gap: 8px; margin: 8px 0;">
+              <div style="color: #f97316; font-weight: bold;">←</div>
+              <span style="color: #f97316; font-weight: 600;">More male</span>
+              <span style="color: var(--muted); font-size: 14px;">(man, king, rooster)</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; margin: 8px 0;">
+              <div style="color: #f97316; font-weight: bold;">→</div>
+              <span style="color: #f97316; font-weight: 600;">More female</span>
+              <span style="color: var(--muted); font-size: 14px;">(woman, queen, hen)</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Right: Same plot as before but with dimension labels -->
+        <div style="flex: 1; min-width: 300px;">
+          <div style="position: relative; background: white; border: 2px solid var(--border); border-radius: 8px; aspect-ratio: 1;">
+            <svg viewBox="0 0 400 400" style="width: 100%; height: 100%;">
+              <!-- Grid lines -->
+              <g stroke="#e5e7eb" stroke-width="0.5">
+                <line x1="67" y1="0" x2="67" y2="400" />
+                <line x1="133" y1="0" x2="133" y2="400" />
+                <line x1="200" y1="0" x2="200" y2="400" />
+                <line x1="267" y1="0" x2="267" y2="400" />
+                <line x1="333" y1="0" x2="333" y2="400" />
+                <line x1="0" y1="67" x2="400" y2="67" />
+                <line x1="0" y1="133" x2="400" y2="133" />
+                <line x1="0" y1="200" x2="400" y2="200" />
+                <line x1="0" y1="267" x2="400" y2="267" />
+                <line x1="0" y1="333" x2="400" y2="333" />
+              </g>
+              
+              <!-- Axes -->
+              <line x1="0" y1="400" x2="400" y2="400" stroke="#374151" stroke-width="2" />
+              <line x1="0" y1="0" x2="0" y2="400" stroke="#374151" stroke-width="2" />
+              
+              <!-- Dimension arrows and labels -->
+              <!-- Power dimension (vertical) -->
+              <line x1="25" y1="340" x2="25" y2="30" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrowhead-blue)" />
+              <text x="30" y="20" font-size="10" font-weight="bold" fill="#3b82f6">More power</text>
+              <text x="30" y="355" font-size="10" font-weight="bold" fill="#3b82f6">Less power</text>
+              
+              <!-- Gender dimension (horizontal) -->
+              <line x1="50" y1="370" x2="350" y2="370" stroke="#f97316" stroke-width="3" marker-end="url(#arrowhead-orange)" />
+              <text x="60" y="385" font-size="10" font-weight="bold" fill="#f97316">More male</text>
+              <text x="285" y="385" font-size="10" font-weight="bold" fill="#f97316">More female</text>
+              
+              <!-- Arrow markers -->
+              <defs>
+                <marker id="arrowhead-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                  <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6" />
+                </marker>
+                <marker id="arrowhead-orange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                  <polygon points="0 0, 10 3.5, 0 7" fill="#f97316" />
+                </marker>
+              </defs>
+              
+              <!-- Axis labels -->
+              <text x="380" y="395" text-anchor="middle" font-size="14" font-weight="bold">X₁</text>
+              <text x="10" y="15" text-anchor="start" font-size="14" font-weight="bold">X₂</text>
+              
+              <!-- Tick labels -->
+              <text x="67" y="395" text-anchor="middle" font-size="10" fill="#6b7280">1.0</text>
+              <text x="200" y="395" text-anchor="middle" font-size="10" fill="#6b7280">3.5</text>
+              <text x="333" y="395" text-anchor="middle" font-size="10" fill="#6b7280">5.5</text>
+              <text x="5" y="340" text-anchor="start" font-size="10" fill="#6b7280">2.0</text>
+              <text x="5" y="207" text-anchor="start" font-size="10" fill="#6b7280">3.0</text>
+              <text x="5" y="74" text-anchor="start" font-size="10" fill="#6b7280">5.0</text>
+              
+              <!-- Words -->
+              <g>
+                <!-- Top row -->
+                <circle cx="67" cy="67" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="67" y="57" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">king</text>
+                
+                <circle cx="200" cy="67" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="200" y="57" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">monarch</text>
+                
+                <circle cx="333" cy="67" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="333" y="57" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">queen</text>
+                
+                <!-- Middle row -->
+                <circle cx="67" cy="200" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="67" y="190" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">man</text>
+                
+                <circle cx="200" cy="200" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="200" y="190" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">person</text>
+                
+                <circle cx="333" cy="200" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="333" y="190" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">woman</text>
+                
+                <!-- Bottom row -->
+                <circle cx="67" cy="267" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="67" y="257" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">rooster</text>
+                
+                <circle cx="200" cy="267" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="200" y="257" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">chicken</text>
+                
+                <circle cx="333" cy="267" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="333" y="257" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">hen</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background: rgba(59, 130, 246, 0.08); border: 2px solid #3b82f6; border-radius: 12px; padding: 20px; margin: 20px 0;">
+        <h3 style="color: #3b82f6; margin: 0 0 12px; font-size: 16px;">Why Start With Just 2 Dimensions?</h3>
+        <p style="margin: 8px 0; font-size: 14px;">Real word embeddings like those in GPT or Word2Vec use <strong>300+ dimensions</strong> - imagine hundreds of meaning aspects like formality, emotion, concreteness, etc. We start with just 2 dimensions (power and gender) to build your intuition.</p>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; padding: 16px; background: var(--bg); border-radius: 8px; border: 1px solid var(--border);">
+          <div style="text-align: center;">
+            <h4 style="margin: 0 0 8px; font-size: 14px; color: var(--emerald);">Our Teaching Example</h4>
+            <div style="font-family: ui-monospace, monospace; background: var(--panel); padding: 12px; border-radius: 6px; font-size: 13px; color: var(--text);">
+              chicken = (3.5, 2.0)
+            </div>
+            <p style="font-size: 12px; color: var(--muted); margin: 8px 0 0;">Just 2 numbers: easy to visualize!</p>
+          </div>
+          
+          <div style="text-align: center;">
+            <h4 style="margin: 0 0 8px; font-size: 14px; color: var(--blue);">Real Word2Vec</h4>
+            <div style="font-family: ui-monospace, monospace; background: var(--panel); padding: 12px; border-radius: 6px; font-size: 11px; color: var(--text); overflow: hidden;">
+              chicken = [0.23, -0.45, 0.12, 0.67, -0.89, 0.34, -0.12, 0.56, ...]
+            </div>
+            <p style="font-size: 12px; color: var(--muted); margin: 8px 0 0;">300 numbers: captures nuanced meaning!</p>
+          </div>
+        </div>
+        
+        <p style="margin: 8px 0; font-size: 14px; color: var(--muted);"><strong>Same principles, different scale!</strong> Whether it's 2 dimensions or 300, the core concept is identical: words become vectors of numbers that capture semantic meaning.</p>
+      </div>
+
+      <div class="analogy">
+        <h4>Key insight:</h4>
+        <p>Each dimension captures a different aspect of meaning. Instead of just saying "king is royal", we can say "king has a power value of 5.0 and a gender value of 1.0". This turns fuzzy concepts into precise numbers that computers can calculate with!</p>
+      </div>
+      
+      <button class="btn btn-primary" onclick="continueToMain()" style="margin-top: 15px;">Next: Learn How Computers Do This →</button>
+    </div>
+
+    <div class="intro" id="main-intro" style="display: none;">
       <h2>What are we learning?</h2>
-      <p>Computers don't naturally understand words like "cat" or "France". But they can learn! We'll explore the <strong>Continuous Bag of Words (CBOW)</strong> model from Word2Vec, which learns word meanings by predicting a target word from its surrounding context.</p>
+      <p>Now that you've seen how words can be represented as coordinates, let's explore how computers learn these representations automatically! We'll explore the <strong>Continuous Bag of Words (CBOW)</strong> model from Word2Vec, which learns word meanings by predicting a target word from its surrounding context.</p>
       
       <div class="goal">
         <h3>Learning Objective: CBOW Model</h3>
@@ -186,10 +492,9 @@
         <h4>Why CBOW works:</h4>
         <p>Words that appear in similar contexts tend to have similar meanings. "cat" and "dog" both appear after "the" and before "sat", so they develop similar embeddings. This distributional hypothesis forms the foundation of modern word embeddings.</p>
       </div>
-      <button class="btn btn-primary" onclick="showDataset()" style="margin-top: 15px;">Next: See Our Training Data →</button>
     </div>
 
-    <div class="stage" id="dataset-stage" style="display: none;">
+    <div class="stage" id="dataset-stage">
       <h2>Our Training Dataset</h2>
       <div class="explanation">
         Our CBOW model was pre-trained on thousands of sentences from news articles and books. The full dataset contains rich contexts for animals (cat/dog), rulers (king/queen), cities (Paris/London), and various actions. Below is a sample of the vocabulary learned from this corpus.
@@ -201,9 +506,10 @@
         <h4>Why word IDs matter:</h4>
         <p>Computers can't work with words directly - they need numbers. Each word gets a unique ID (like "cat" → 2, "sat" → 3). These IDs are used to look up the word's embedding vector during training and prediction.</p>
       </div>
+      <button class="btn btn-primary" onclick="showControls()" style="margin-top: 15px;">Next: Try the Interactive Demo →</button>
     </div>
 
-    <div class="grid cols-4">
+    <div class="grid cols-4" id="controls-stage" style="display: none;">
       <div class="card">
         <div class="title">Select Training Sentence</div>
         <select id="sentence"></select>
@@ -263,9 +569,6 @@
           <div class="title">Training Controls</div>
           <button class="btn" id="trainModel" style="font-size:16px; padding:12px 24px;">Train Model</button>
           <button class="btn" id="resetTraining" style="margin-top:12px;">Reset to Random</button>
-          <button class="btn" onclick="console.log('Test button works!'); animateTraining();" style="margin-top:12px; background: orange;">🔧 Test Training</button>
-          <button class="btn" onclick="console.log('Testing visualization...'); updateEmbeddingPlot();" style="margin-top:12px; background: purple; color: white;">📊 Test Viz</button>
-          <button class="btn" onclick="if(trainingInterval) { clearInterval(trainingInterval); trainingInterval = null; isTraining = false; console.log('EMERGENCY STOP!'); }" style="margin-top:12px; background: red; color: white;">🛑 STOP</button>
           <div class="sub" style="margin-top:8px;">Watch the model learn meaningful word relationships!</div>
           <div id="trainingProgress" style="margin-top:12px; display:none;">
             <div style="background:var(--border); height:6px; border-radius:3px; overflow:hidden;">
@@ -1428,6 +1731,7 @@ function updateEmbeddingPlot() {
 window.addEventListener('load', () => {
   console.log('Page loaded, initializing...');
   
+  
   // Check if all elements exist
   console.log('trainModel element:', $trainModel);
   console.log('resetTraining element:', $resetTraining);
@@ -1455,10 +1759,133 @@ window.addEventListener('load', () => {
   }, 500);
 });
 
+// --------- Coordinate Exercise Functions ---------
+
+// Expected answers (reasonable ranges)
+const correctAnswers = {
+  chicken: { x: 3.5, y: 2.0 }, // Center column (neutral gender), bottom row (animal level)
+  king: { x: 1.0, y: 5.0 }     // Left column (male), top row (royal level)
+};
+
+// Convert coordinate to SVG position
+function coordToSVG(x, y) {
+  // Map coordinate space (0-6) to SVG space (0-400)
+  // X: 0->0, 1->67, 3.5->200, 5.5->333, 6->400
+  // Y: inverted because SVG Y increases downward
+  // Y: 0->400, 2->267, 3->200, 5->67, 6->0
+  const svgX = (x / 6) * 400;
+  const svgY = 400 - (y / 6) * 400;
+  return { x: svgX, y: svgY };
+}
+
+function checkCoordinates() {
+  const chickenXInput = document.getElementById('chicken-x');
+  const chickenYInput = document.getElementById('chicken-y');
+  const kingXInput = document.getElementById('king-x');
+  const kingYInput = document.getElementById('king-y');
+  
+  // Get values, using placeholder if input is empty
+  const chickenX = parseFloat(chickenXInput.value || chickenXInput.placeholder);
+  const chickenY = parseFloat(chickenYInput.value || chickenYInput.placeholder);
+  const kingX = parseFloat(kingXInput.value || kingXInput.placeholder);
+  const kingY = parseFloat(kingYInput.value || kingYInput.placeholder);
+  
+  const feedback = document.getElementById('coordinate-feedback');
+  const userWords = document.getElementById('user-words');
+  
+  // Check if all values are valid numbers
+  if (isNaN(chickenX) || isNaN(chickenY) || isNaN(kingX) || isNaN(kingY)) {
+    feedback.style.display = 'block';
+    feedback.style.background = 'rgba(239, 68, 68, 0.1)';
+    feedback.style.border = '1px solid #ef4444';
+    feedback.style.color = '#ef4444';
+    feedback.innerHTML = '❌ Please enter valid coordinate values!';
+    return;
+  }
+  
+  // Check if values are in valid range
+  if (chickenX < 0 || chickenX > 6 || chickenY < 0 || chickenY > 6 || 
+      kingX < 0 || kingX > 6 || kingY < 0 || kingY > 6) {
+    feedback.style.display = 'block';
+    feedback.style.background = 'rgba(239, 68, 68, 0.1)';
+    feedback.style.border = '1px solid #ef4444';
+    feedback.style.color = '#ef4444';
+    feedback.innerHTML = '❌ All coordinates must be between 0 and 6!';
+    return;
+  }
+  
+  // No need to plot overlay points since all words are already visible
+  
+  // Check if answers are close enough to correct answers
+  const chickenError = Math.abs(chickenX - correctAnswers.chicken.x) + Math.abs(chickenY - correctAnswers.chicken.y);
+  const kingError = Math.abs(kingX - correctAnswers.king.x) + Math.abs(kingY - correctAnswers.king.y);
+  
+  const tolerance = 0.3; // Tighter tolerance since they're reading coordinates
+  
+  if (chickenError <= tolerance && kingError <= tolerance) {
+    // Both answers are good!
+    feedback.style.display = 'none';
+    
+    // Show success message with animation
+    const successDiv = document.getElementById('exercise-success');
+    successDiv.style.display = 'block';
+    successDiv.style.animation = 'none';
+    setTimeout(() => {
+      successDiv.style.animation = 'fadeIn 0.5s ease-in';
+      successDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
+    
+  } else {
+    // Show partial feedback focused on coordinate reading
+    let feedbackText = '🤔 Take another look at the plot:\n\n';
+    
+    if (chickenError > tolerance) {
+      feedbackText += `🐔 Chicken: You said (${chickenX}, ${chickenY}). Look closely at where "chicken" sits in the grid.\n`;
+    } else {
+      feedbackText += '✅ Chicken coordinates look correct!\n';
+    }
+    
+    if (kingError > tolerance) {
+      feedbackText += `👑 King: You said (${kingX}, ${kingY}). Look closely at where "king" sits in the grid.`;
+    } else {
+      feedbackText += '✅ King coordinates look correct!';
+    }
+    
+    feedbackText += '\n\nRemember: just read the coordinates directly from where each word appears on the plot.';
+    
+    feedback.style.display = 'block';
+    feedback.style.background = 'rgba(251, 191, 36, 0.1)';
+    feedback.style.border = '1px solid #fbbf24';
+    feedback.style.color = '#92400e';
+    feedback.innerHTML = feedbackText.replace(/\n/g, '<br>');
+  }
+}
+
+function showDimensions() {
+  // Hide the coordinate exercise
+  document.getElementById('coordinate-exercise').style.display = 'none';
+  // Show the dimensions explanation
+  document.getElementById('dimensions-explanation').style.display = 'block';
+  document.getElementById('dimensions-explanation').scrollIntoView({ behavior: 'smooth' });
+}
+
+function continueToMain() {
+  // Hide the dimensions explanation
+  document.getElementById('dimensions-explanation').style.display = 'none';
+  // Show the main intro
+  document.getElementById('main-intro').style.display = 'block';
+  document.getElementById('main-intro').scrollIntoView({ behavior: 'smooth' });
+}
+
 // Navigation functions for progressive disclosure
 function showDataset() {
   document.getElementById('dataset-stage').style.display = 'block';
   document.getElementById('dataset-stage').scrollIntoView({ behavior: 'smooth' });
+}
+
+function showControls() {
+  document.getElementById('controls-stage').style.display = 'block';
+  document.getElementById('controls-stage').scrollIntoView({ behavior: 'smooth' });
 }
 
 function showBreakdown() {
