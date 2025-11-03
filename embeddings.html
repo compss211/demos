@@ -367,14 +367,14 @@
                 <text x="333" y="190" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">woman</text>
                 
                 <!-- Bottom row: rooster (1.0, 2.0), chicken (3.5, 2.0), hen (5.5, 2.0) -->
-                <circle cx="67" cy="267" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
-                <text x="67" y="257" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">rooster</text>
-                
-                <circle cx="200" cy="267" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
-                <text x="200" y="257" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">chicken</text>
-                
-                <circle cx="333" cy="267" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
-                <text x="333" y="257" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">hen</text>
+                <circle cx="67" cy="333" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="67" y="323" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">rooster</text>
+
+                <circle cx="200" cy="333" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="200" y="323" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">chicken</text>
+
+                <circle cx="333" cy="333" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="333" y="323" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">hen</text>
               </g>
               
               <!-- Placeholder circles for user answers (these will be invisible since all words are shown) -->
@@ -520,14 +520,14 @@
                 <text x="333" y="190" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">woman</text>
                 
                 <!-- Bottom row -->
-                <circle cx="67" cy="267" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
-                <text x="67" y="257" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">rooster</text>
-                
-                <circle cx="200" cy="267" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
-                <text x="200" y="257" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">chicken</text>
-                
-                <circle cx="333" cy="267" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
-                <text x="333" y="257" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">hen</text>
+                <circle cx="67" cy="333" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="67" y="323" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">rooster</text>
+
+                <circle cx="200" cy="333" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="200" y="323" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">chicken</text>
+
+                <circle cx="333" cy="333" r="8" fill="#22c55e" stroke="white" stroke-width="2" />
+                <text x="333" y="323" text-anchor="middle" font-size="12" font-weight="bold" fill="#22c55e">hen</text>
               </g>
             </svg>
           </div>
@@ -742,23 +742,11 @@
       <button class="btn btn-primary" onclick="showInterpretability()" style="margin-top: 20px;">Next: Interpretability →</button>
     </div>
 
-    <div class="intro" id="summary-stage" style="display: none;">
-      <h2>Summary</h2>
-      <p>This demonstration illustrated how computers learn word relationships through predictive modeling:</p>
-      <ul style="margin: 12px 0; padding-left: 20px;">
-        <li><strong>Training process</strong>: Random embeddings gradually improve through prediction tasks</li>
-        <li><strong>Semantic clustering</strong>: Words appearing in similar contexts develop similar numerical representations</li>
-        <li><strong>Contextual learning</strong>: The training objective forces related words to cluster together</li>
-        <li><strong>Vector semantics</strong>: Word meanings become mathematical objects that can be manipulated computationally</li>
-      </ul>
-      <p>By training on the simple context prediction task, the model discovers meaningful semantic relationships. This approach forms the foundation of modern natural language processing and large language models.</p>
-    </div>
-
     <!-- Interpretability -->
     <div class="intro" id="interpretability-stage" style="display: none;">
       <h2>Interpretability</h2>
       <p>Now let's see what <strong>real word embeddings</strong> actually look like! In practice, embeddings have hundreds of dimensions (300-1024 is common). While most dimensions are hard to interpret, some clearly capture human-understandable concepts like gender, age, or social status.</p>
-      
+
       <div class="goal">
         <h3>Key Insight: Emergent Interpretability</h3>
         <p>Even though computers learn embeddings without being told what concepts to capture, some dimensions naturally emerge that correspond to meaningful semantic properties. This shows that mathematical word representations can capture real-world knowledge!</p>
@@ -768,18 +756,18 @@
       <div class="card" style="margin: 24px 0;">
         <div class="title">Interactive Real Embeddings Matrix</div>
         <div class="sub" style="margin-bottom: 16px;">Click on dimension buttons to see how different concepts light up across words. Colors represent embedding values: red = high positive, blue = high negative, white = near zero.</div>
-        
+
         <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
           <button class="dimension-btn btn-primary" onclick="highlightDimension('gender')" id="gender-btn">Gender Dimension</button>
           <button class="dimension-btn" onclick="highlightDimension('royalty')" id="royalty-btn">Royalty Dimension</button>
           <button class="dimension-btn" onclick="highlightDimension('age')" id="age-btn">Age/Maturity Dimension</button>
           <button class="dimension-btn" onclick="highlightDimension('none')" id="none-btn">Show All</button>
         </div>
-        
+
         <div id="embeddings-container" style="overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; background: white;">
           <!-- Will be populated by JavaScript -->
         </div>
-        
+
         <div id="dimension-explanation" class="analogy" style="margin-top: 16px; display: none;">
           <!-- Will be populated by JavaScript -->
         </div>
@@ -790,13 +778,25 @@
         <p><strong>Rows</strong> = Different words | <strong>Columns</strong> = Individual embedding dimensions (300+ total) | <strong>Colors</strong> = Strength and direction of each feature</p>
         <p>Notice how certain dimensions consistently activate for semantically similar words - this is how computers learn to group related concepts!</p>
       </div>
-      
+
       <div class="goal">
         <h3>From Toy Examples to Real AI</h3>
         <p>This is exactly how large language models like GPT work internally - they learn hundreds or thousands of interpretable and uninterpretable features that capture all aspects of human language and knowledge. Your 2D/3D understanding scales to these high-dimensional spaces!</p>
       </div>
-      
+
       <button class="btn btn-primary" onclick="showSummary()" style="margin-top: 20px;">Next: See Summary →</button>
+    </div>
+
+    <div class="intro" id="summary-stage" style="display: none;">
+      <h2>Summary</h2>
+      <p>This demonstration illustrated how computers learn word relationships through predictive modeling:</p>
+      <ul style="margin: 12px 0; padding-left: 20px;">
+        <li><strong>Training process</strong>: Random embeddings gradually improve through prediction tasks</li>
+        <li><strong>Semantic clustering</strong>: Words appearing in similar contexts develop similar numerical representations</li>
+        <li><strong>Contextual learning</strong>: The training objective forces related words to cluster together</li>
+        <li><strong>Vector semantics</strong>: Word meanings become mathematical objects that can be manipulated computationally</li>
+      </ul>
+      <p>By training on the simple context prediction task, the model discovers meaningful semantic relationships. This approach forms the foundation of modern natural language processing and large language models.</p>
     </div>
 
   </div>
