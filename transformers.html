@@ -678,6 +678,37 @@
                         </div>
                     </div>
 
+                    <!-- Shared Embedding Explanation -->
+                    <div style="background: rgba(255,193,7,.08); border: 1px solid rgba(255,193,7,.3); border-radius: 8px; padding: 15px; margin-top: 20px;">
+                        <h4 style="color: var(--orange); margin: 0 0 12px;">📊 Understanding Embedding Values</h4>
+                        <p style="margin: 0 0 8px; font-size: 13px; line-height: 1.5;">Embeddings are <strong>learned representations</strong> where each dimension captures some learned concept. The numbers are <em>relative strengths</em> - higher means stronger association. In real models, there are 768-12,288 dimensions!</p>
+                        <div style="background: var(--bg); padding: 10px; border-radius: 6px; margin-top: 10px;">
+                            <div style="font-size: 11px; color: var(--muted); margin-bottom: 6px;">Example comparison:</div>
+                            <div style="display: grid; grid-template-columns: auto 1fr 1fr 1fr; gap: 8px; font-size: 11px;">
+                                <div style="font-weight: 600;"></div>
+                                <div style="text-align: center; font-weight: 600;">animal-like</div>
+                                <div style="text-align: center; font-weight: 600;">noun-like</div>
+                                <div style="text-align: center; font-weight: 600;">domestic</div>
+
+                                <div style="font-weight: 600;">cat</div>
+                                <div style="text-align: center; background: rgba(102,16,242,.15); padding: 2px; border-radius: 3px;">0.2</div>
+                                <div style="text-align: center; background: rgba(102,16,242,.25); padding: 2px; border-radius: 3px;">0.8</div>
+                                <div style="text-align: center; background: rgba(102,16,242,.15); padding: 2px; border-radius: 3px;">0.1</div>
+
+                                <div style="font-weight: 600;">wolf</div>
+                                <div style="text-align: center; background: rgba(102,16,242,.25); padding: 2px; border-radius: 3px;">0.7</div>
+                                <div style="text-align: center; background: rgba(102,16,242,.25); padding: 2px; border-radius: 3px;">0.6</div>
+                                <div style="text-align: center; background: rgba(102,16,242,.05); padding: 2px; border-radius: 3px;">-0.4</div>
+
+                                <div style="font-weight: 600;">runs</div>
+                                <div style="text-align: center; background: rgba(102,16,242,.05); padding: 2px; border-radius: 3px;">-0.1</div>
+                                <div style="text-align: center; background: rgba(102,16,242,.05); padding: 2px; border-radius: 3px;">-0.3</div>
+                                <div style="text-align: center; background: rgba(102,16,242,.15); padding: 2px; border-radius: 3px;">0.0</div>
+                            </div>
+                            <div style="font-size: 10px; color: var(--muted); margin-top: 6px;">→ "cat" scores high on noun-like (0.8), "wolf" scores high on animal-like (0.7) and wild (-0.4), "runs" is a verb (low noun score)</div>
+                        </div>
+                    </div>
+
                     <!-- Interactive "What's Really Happening" Explanations -->
                     <div style="margin-top: 20px;">
                         <!-- Query Explanation (default visible) -->
@@ -685,45 +716,6 @@
                             <div style="background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.3); border-radius: 8px; padding: 15px;">
                                 <h4 style="color: var(--red); margin: 0 0 12px;">🔍 What is W<sub>Q</sub> Really Doing?</h4>
                                 <p style="margin: 0 0 12px; font-size: 14px;"><strong>W<sub>Q</sub></strong> creates a "search pattern" by recombining embedding dimensions.</p>
-
-                                <div style="background: rgba(255,193,7,.08); border: 1px solid rgba(255,193,7,.3); border-radius: 6px; padding: 12px; margin: 10px 0;">
-                                    <p style="margin: 0 0 8px; font-size: 13px; font-weight: 600;">📊 Understanding Embedding Values</p>
-                                    <p style="margin: 0 0 8px; font-size: 12px; line-height: 1.5;">Embeddings are <strong>learned representations</strong> where each dimension captures some learned concept. The numbers are <em>relative strengths</em> - higher means stronger association. In real models, there are 768-12,288 dimensions!</p>
-                                    <div style="background: var(--bg); padding: 8px; border-radius: 4px; margin-top: 8px;">
-                                        <div style="font-size: 11px; color: var(--muted); margin-bottom: 6px;">Example comparison:</div>
-                                        <div style="display: grid; grid-template-columns: auto 1fr 1fr 1fr; gap: 8px; font-size: 11px;">
-                                            <div style="font-weight: 600;"></div>
-                                            <div style="text-align: center; font-weight: 600;">animal-like</div>
-                                            <div style="text-align: center; font-weight: 600;">noun-like</div>
-                                            <div style="text-align: center; font-weight: 600;">domestic</div>
-
-                                            <div style="font-weight: 600;">cat</div>
-                                            <div style="text-align: center; background: rgba(102,16,242,.15); padding: 2px; border-radius: 3px;">0.2</div>
-                                            <div style="text-align: center; background: rgba(102,16,242,.25); padding: 2px; border-radius: 3px;">0.8</div>
-                                            <div style="text-align: center; background: rgba(102,16,242,.15); padding: 2px; border-radius: 3px;">0.1</div>
-
-                                            <div style="font-weight: 600;">wolf</div>
-                                            <div style="text-align: center; background: rgba(102,16,242,.25); padding: 2px; border-radius: 3px;">0.7</div>
-                                            <div style="text-align: center; background: rgba(102,16,242,.25); padding: 2px; border-radius: 3px;">0.6</div>
-                                            <div style="text-align: center; background: rgba(102,16,242,.05); padding: 2px; border-radius: 3px;">-0.4</div>
-
-                                            <div style="font-weight: 600;">runs</div>
-                                            <div style="text-align: center; background: rgba(102,16,242,.05); padding: 2px; border-radius: 3px;">-0.1</div>
-                                            <div style="text-align: center; background: rgba(102,16,242,.05); padding: 2px; border-radius: 3px;">-0.3</div>
-                                            <div style="text-align: center; background: rgba(102,16,242,.15); padding: 2px; border-radius: 3px;">0.0</div>
-                                        </div>
-                                        <div style="font-size: 10px; color: var(--muted); margin-top: 6px;">→ "cat" scores high on noun-like (0.8), "wolf" scores high on animal-like (0.7) and wild (-0.4), "runs" is a verb (low noun score)</div>
-                                    </div>
-                                </div>
-
-                                <div style="background: var(--bg); border-radius: 6px; padding: 12px; margin: 10px 0;">
-                                    <p style="margin: 0 0 8px; font-size: 13px; font-weight: 500;">For "cat", the embedding is:</p>
-                                    <div style="display: flex; gap: 8px; margin: 8px 0;">
-                                        <span style="padding: 4px 8px; background: rgba(102,16,242,.15); border-radius: 4px; font-size: 12px;">dim 1: animal-like (0.2)</span>
-                                        <span style="padding: 4px 8px; background: rgba(102,16,242,.25); border-radius: 4px; font-size: 12px;">dim 2: noun-like (0.8)</span>
-                                        <span style="padding: 4px 8px; background: rgba(102,16,242,.15); border-radius: 4px; font-size: 12px;">dim 3: domestic (0.1)</span>
-                                    </div>
-                                </div>
 
                                 <div style="background: rgba(239,68,68,.05); border-left: 3px solid rgba(239,68,68,0.5); padding: 10px 12px; border-radius: 4px; margin: 12px 0;">
                                     <p style="margin: 0 0 8px; font-size: 13px;">
@@ -755,16 +747,6 @@
                                 <h4 style="color: var(--emerald); margin: 0 0 12px;">🔍 What is W<sub>K</sub> Really Doing?</h4>
                                 <p style="margin: 0 0 12px; font-size: 14px;"><strong>W<sub>K</sub></strong> creates an "identity tag" by recombining embedding dimensions.</p>
 
-                                <div style="background: var(--bg); border-radius: 6px; padding: 12px; margin: 10px 0;">
-                                    <p style="margin: 0 0 8px; font-size: 13px; font-weight: 500;">For "cat", the embedding is:</p>
-                                    <div style="display: flex; gap: 8px; margin: 8px 0;">
-                                        <span style="padding: 4px 8px; background: rgba(102,16,242,.15); border-radius: 4px; font-size: 12px;">dim 1: animal-like (0.2)</span>
-                                        <span style="padding: 4px 8px; background: rgba(102,16,242,.25); border-radius: 4px; font-size: 12px;">dim 2: noun-like (0.8)</span>
-                                        <span style="padding: 4px 8px; background: rgba(102,16,242,.15); border-radius: 4px; font-size: 12px;">dim 3: domestic (0.1)</span>
-                                    </div>
-                                    <div style="font-size: 11px; color: var(--muted); margin-top: 6px;">These are relative strengths learned during training. Higher = stronger association.</div>
-                                </div>
-
                                 <div style="background: rgba(34,197,94,.05); border-left: 3px solid rgba(34,197,94,0.6); padding: 10px 12px; border-radius: 4px; margin: 12px 0;">
                                     <p style="margin: 0 0 8px; font-size: 13px;">
                                         <span style="background: rgba(34,197,94,0.15); padding: 2px 6px; border-radius: 3px; font-size: 10px; margin-right: 6px; font-weight: 600;">row 1</span>
@@ -795,16 +777,6 @@
                                 <h4 style="color: var(--blue); margin: 0 0 12px;">🔍 What is W<sub>V</sub> Really Doing?</h4>
                                 <p style="margin: 0 0 12px; font-size: 14px;"><strong>W<sub>V</sub></strong> creates the "content package" that will be passed forward.</p>
 
-                                <div style="background: var(--bg); border-radius: 6px; padding: 12px; margin: 10px 0;">
-                                    <p style="margin: 0 0 8px; font-size: 13px; font-weight: 500;">For "cat", the embedding is:</p>
-                                    <div style="display: flex; gap: 8px; margin: 8px 0;">
-                                        <span style="padding: 4px 8px; background: rgba(102,16,242,.15); border-radius: 4px; font-size: 12px;">dim 1: animal-like (0.2)</span>
-                                        <span style="padding: 4px 8px; background: rgba(102,16,242,.25); border-radius: 4px; font-size: 12px;">dim 2: noun-like (0.8)</span>
-                                        <span style="padding: 4px 8px; background: rgba(102,16,242,.15); border-radius: 4px; font-size: 12px;">dim 3: domestic (0.1)</span>
-                                    </div>
-                                    <div style="font-size: 11px; color: var(--muted); margin-top: 6px;">These are relative strengths learned during training. Higher = stronger association.</div>
-                                </div>
-
                                 <div style="background: rgba(59,130,246,.05); border-left: 3px solid rgba(59,130,246,0.6); padding: 10px 12px; border-radius: 4px; margin: 12px 0;">
                                     <p style="margin: 0 0 8px; font-size: 13px;">
                                         <span style="background: rgba(59,130,246,0.15); padding: 2px 6px; border-radius: 3px; font-size: 10px; margin-right: 6px; font-weight: 600;">row 1</span>
@@ -831,9 +803,58 @@
                     </div>
                 </div>
 
-                <div style="background: rgba(102,16,242,.08); border: 1px solid rgba(102,16,242,.3); border-radius: 8px; padding: 15px; margin-top: 20px;">
-                    <h4 style="color: var(--indigo); margin: 0 0 8px;">⚡ The Key Insight</h4>
-                    <p style="margin: 0; font-size: 14px;">Each word gets THREE different representations of itself. The Query asks "what should I attend to?", Keys answer "I can provide this type of info", and Values contain "here's my actual content". The magic happens when Queries find matching Keys!</p>
+                <div class="goal" style="margin-top: 20px;">
+                    <h3>🔗 What Happens Next: Q · K<sup>T</sup></h3>
+                    <p style="margin: 0 0 15px;">Now that we have Query, Key, and Value vectors for each word, we use them to calculate <strong>attention scores</strong> through dot products.</p>
+
+                    <div style="background: var(--bg); border-radius: 8px; padding: 15px; margin: 15px 0;">
+                        <h4 style="color: var(--blue); margin: 0 0 12px; font-size: 15px;">The Attention Score Formula</h4>
+                        <div style="background: rgba(13,110,253,.08); padding: 12px; border-radius: 6px; font-family: monospace; font-size: 14px; text-align: center; border: 1px solid rgba(13,110,253,.3);">
+                            Attention(Q, K, V) = softmax(Q · K<sup>T</sup> / √d<sub>k</sub>) · V
+                        </div>
+                        <p style="margin: 12px 0 0; font-size: 13px; color: var(--muted);">where d<sub>k</sub> is the dimension of the key vectors (scaling factor)</p>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;">
+                        <div style="background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.3); border-radius: 8px; padding: 12px;">
+                            <h5 style="color: var(--red); margin: 0 0 8px; font-size: 14px;">Step 1: Q · K<sup>T</sup></h5>
+                            <p style="margin: 0; font-size: 12px;">Compare "cat's" Query with all Keys via dot product:</p>
+                            <div style="background: var(--bg); padding: 8px; border-radius: 4px; margin-top: 8px; font-size: 11px; font-family: monospace;">
+                                Q<sub>cat</sub> · K<sub>the</sub> = low score<br>
+                                Q<sub>cat</sub> · K<sub>black</sub> = <strong>high score</strong><br>
+                                Q<sub>cat</sub> · K<sub>cat</sub> = <strong>very high score</strong><br>
+                                Q<sub>cat</sub> · K<sub>ate</sub> = medium score<br>
+                                Q<sub>cat</sub> · K<sub>fish</sub> = medium score
+                            </div>
+                            <p style="margin: 8px 0 0; font-size: 11px; color: var(--muted);">Higher dot product = better match between what "cat" is looking for and what that word offers</p>
+                        </div>
+
+                        <div style="background: rgba(59,130,246,.08); border: 1px solid rgba(59,130,246,.3); border-radius: 8px; padding: 12px;">
+                            <h5 style="color: var(--blue); margin: 0 0 8px; font-size: 14px;">Step 2: Softmax → Weights</h5>
+                            <p style="margin: 0; font-size: 12px;">Convert scores to probabilities (sum to 1):</p>
+                            <div style="background: var(--bg); padding: 8px; border-radius: 4px; margin-top: 8px; font-size: 11px;">
+                                <div style="margin-bottom: 4px;">the: 10% <div style="height: 6px; width: 10%; background: rgba(13,110,253,0.3); border-radius: 3px;"></div></div>
+                                <div style="margin-bottom: 4px;">black: <strong>45%</strong> <div style="height: 6px; width: 45%; background: rgba(13,110,253,0.6); border-radius: 3px;"></div></div>
+                                <div style="margin-bottom: 4px;">cat: <strong>30%</strong> <div style="height: 6px; width: 30%; background: rgba(13,110,253,0.5); border-radius: 3px;"></div></div>
+                                <div style="margin-bottom: 4px;">ate: 10% <div style="height: 6px; width: 10%; background: rgba(13,110,253,0.3); border-radius: 3px;"></div></div>
+                                <div>fish: 5% <div style="height: 6px; width: 5%; background: rgba(13,110,253,0.2); border-radius: 3px;"></div></div>
+                            </div>
+                            <p style="margin: 8px 0 0; font-size: 11px; color: var(--muted);">These are the attention weights!</p>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(25,135,84,.08); border: 1px solid rgba(25,135,84,.3); border-radius: 8px; padding: 12px; margin-top: 15px;">
+                        <h5 style="color: var(--emerald); margin: 0 0 8px; font-size: 14px;">Step 3: Weighted Sum of Values</h5>
+                        <p style="margin: 0; font-size: 12px;">Multiply each word's Value by its attention weight and sum:</p>
+                        <div style="background: var(--bg); padding: 10px; border-radius: 6px; margin-top: 8px; font-family: monospace; font-size: 12px; text-align: center;">
+                            Output<sub>cat</sub> = 0.10×V<sub>the</sub> + 0.45×V<sub>black</sub> + 0.30×V<sub>cat</sub> + 0.10×V<sub>ate</sub> + 0.05×V<sub>fish</sub>
+                        </div>
+                        <p style="margin: 8px 0 0; font-size: 11px; color: var(--muted);">The output for "cat" is now enriched with information from "black" (its most attended word) and other context!</p>
+                    </div>
+
+                    <div style="background: rgba(102,16,242,.08); border-left: 3px solid var(--indigo); padding: 10px 12px; border-radius: 4px; margin-top: 15px;">
+                        <p style="margin: 0; font-size: 13px;"><strong>💡 Why This Works:</strong> The Query-Key dot product is high when both vectors point in similar directions - meaning "cat's" query matches well with "black's" key. This automatically determines which words provide the most relevant context!</p>
+                    </div>
                 </div>
             </div>
             <button class="btn btn-primary" onclick="showStep3()">Next: Calculate Attention Scores →</button>
