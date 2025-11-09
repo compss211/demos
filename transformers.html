@@ -857,51 +857,12 @@
                     </div>
                 </div>
             </div>
-            <button class="btn btn-primary" onclick="showStep3()">Next: Calculate Attention Scores →</button>
+            <button class="btn btn-primary" onclick="showStep4()">Next: Visualize the Attention Matrix →</button>
     </div>
 
-        <!-- Step 4: Calculating Attention Scores -->
-        <div class="stage hidden" id="step3">
-            <h2><span class="step-number">4</span>Calculating Attention Scores</h2>
-            <div class="explanation">
-                We calculate how relevant each word is to our current word by comparing Query with all Keys.
-                <br>Higher score = more relevant = pay more attention!
-            </div>
-            <div class="card">
-            <p><strong>Let's calculate attention for the word "cat":</strong></p>
-            <p>Click each box to see how much "cat" should attend to each word:</p>
-            <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 20px 0;">
-                    <div class="attention-calculation" data-word="The" onclick="calculateAttention(0)">
-                        <div class="chip">The</div>
-                        <div class="tag hidden" id="score-0"><b>Score:</b> 0.15</div>
-                    </div>
-                    <div class="attention-calculation" data-word="black" onclick="calculateAttention(1)">
-                        <div class="chip">black</div>
-                        <div class="tag hidden" id="score-1"><b>Score:</b> 0.7</div>
-                    </div>
-                    <div class="attention-calculation" data-word="cat" onclick="calculateAttention(2)">
-                        <div class="chip">cat</div>
-                        <div class="tag hidden" id="score-2"><b>Score:</b> 0.9</div>
-                    </div>
-                    <div class="attention-calculation" data-word="ate" onclick="calculateAttention(3)">
-                        <div class="chip">ate</div>
-                        <div class="tag hidden" id="score-3"><b>Score:</b> 0.4</div>
-                    </div>
-                    <div class="attention-calculation" data-word="fish" onclick="calculateAttention(4)">
-                        <div class="chip">fish</div>
-                        <div class="tag hidden" id="score-4"><b>Score:</b> 0.3</div>
-                    </div>
-            </div>
-            <div id="attention-explanation" class="hidden explanation" style="margin-top: 20px;">
-                ✨ Notice: "cat" pays most attention to itself (0.9) and its descriptor "black" (0.7), moderate attention to the action "ate" (0.4), and less to "The" and "fish"!
-            </div>
-        </div>
-            <button class="btn btn-primary" id="step3-next" disabled onclick="showStep4()">Next: Visualize the Matrix →</button>
-    </div>
-
-        <!-- Step 5: Attention Matrix -->
+        <!-- Step 4: Attention Matrix -->
         <div class="stage hidden" id="step4">
-            <h2><span class="step-number">5</span>The Attention Matrix</h2>
+            <h2><span class="step-number">4</span>The Attention Matrix</h2>
             <div class="explanation">
                 The attention matrix shows how much each word (row) attends to every other word (column).
                 <br>Darker = stronger attention, Lighter = weaker attention
@@ -962,9 +923,9 @@
             <button class="btn btn-primary" onclick="showCalculator()">Next: Try the Live Calculator! →</button>
     </div>
 
-        <!-- Step 6: Live Attention Calculator -->
+        <!-- Step 5: Live Attention Calculator -->
         <div class="stage hidden" id="calculator">
-            <h2><span class="step-number">6</span>Live Attention Calculator</h2>
+            <h2><span class="step-number">5</span>Live Attention Calculator</h2>
             <div class="explanation">
                 🧮 <strong>The Real Mechanism:</strong> Attention scores come from dot products between Query and Key vectors. Let's see how changing the Query or Key vectors affects attention!
             </div>
@@ -1034,9 +995,9 @@
             <button class="btn btn-primary" onclick="showStep5()">Continue to Interactive Demo →</button>
         </div>
 
-        <!-- Step 7: Interactive Demo -->
+        <!-- Step 6: Interactive Demo -->
         <div class="stage hidden" id="step5">
-            <h2><span class="step-number">7</span>Try It Yourself!</h2>
+            <h2><span class="step-number">6</span>Try It Yourself!</h2>
             <div class="explanation">
                 Click on any word to see which words it pays attention to. The thickness and color of the lines show attention strength.
             </div>
@@ -1289,22 +1250,69 @@
             return vec1.reduce((sum, val, i) => sum + val * vec2[i], 0);
         }
         
+        // Track previous scores for highlighting changes
+        let previousScores = {};
+
         function calculateDotProducts() {
             // Calculate dot products for each key vector
             const scores = {};
             const words = ['the', 'black', 'cat', 'ate', 'fish'];
-            
+
             words.forEach(word => {
                 scores[word] = dotProduct(queryVector, keyVectors[word]);
             });
-            
-            // Show calculations
+
+            // Find max score for highlighting
+            const maxScore = Math.max(...Object.values(scores));
+            const minScore = Math.min(...Object.values(scores));
+            const scoreRange = maxScore - minScore;
+
+            // Show calculations with dynamic highlighting
             const calculationsDiv = document.getElementById('calculations');
             calculationsDiv.innerHTML = words.map(word => {
                 const keyVec = keyVectors[word];
                 const score = scores[word];
-                return `Q_cat · K_${word} = [${queryVector.join(', ')}] · [${keyVec.join(', ')}] = <strong>${score.toFixed(2)}</strong>`;
-            }).join('<br>');
+                const prevScore = previousScores[word] || score;
+                const scoreChange = score - prevScore;
+
+                // Calculate intensity based on score value (0 to 1 scale)
+                const intensity = scoreRange > 0 ? (score - minScore) / scoreRange : 0.5;
+
+                // Determine colors based on score magnitude
+                let bgColor, textColor, borderColor;
+                if (intensity > 0.66) {
+                    // High scores - strong green
+                    bgColor = 'rgba(25,135,84,0.2)';
+                    textColor = 'rgba(25,135,84,1)';
+                    borderColor = 'rgba(25,135,84,0.5)';
+                } else if (intensity > 0.33) {
+                    // Medium scores - blue
+                    bgColor = 'rgba(13,110,253,0.15)';
+                    textColor = 'rgba(13,110,253,1)';
+                    borderColor = 'rgba(13,110,253,0.4)';
+                } else {
+                    // Low scores - muted
+                    bgColor = 'rgba(108,117,125,0.1)';
+                    textColor = 'rgba(108,117,125,1)';
+                    borderColor = 'rgba(108,117,125,0.3)';
+                }
+
+                // Add indicator for score changes
+                let changeIndicator = '';
+                if (Math.abs(scoreChange) > 0.01) {
+                    if (scoreChange > 0) {
+                        changeIndicator = `<span style="color: #198754; margin-left: 8px; font-size: 14px;">↑ +${scoreChange.toFixed(2)}</span>`;
+                    } else {
+                        changeIndicator = `<span style="color: #dc3545; margin-left: 8px; font-size: 14px;">↓ ${scoreChange.toFixed(2)}</span>`;
+                    }
+                }
+
+                const scoreDisplay = `<strong style="color: ${textColor}; font-size: 16px; padding: 3px 8px; background: ${bgColor}; border-radius: 4px; border: 1px solid ${borderColor};">${score.toFixed(2)}</strong>`;
+
+                return `<div style="padding: 8px; margin: 4px 0; background: var(--panel); border-radius: 6px; border-left: 3px solid ${borderColor};">
+                    Q_cat · K_${word} = [${queryVector.map(v => v.toFixed(2)).join(', ')}] · [${keyVec.join(', ')}] = ${scoreDisplay}${changeIndicator}
+                </div>`;
+            }).join('');
             
             // Apply softmax to get attention weights
             const scoreValues = Object.values(scores);
@@ -1312,27 +1320,49 @@
             const sumExp = expScores.reduce((a, b) => a + b, 0);
             const weights = expScores.map(e => e / sumExp);
             
-            // Update attention bars
+            // Update attention bars with highlighting
             const barsDiv = document.getElementById('attention-bars');
             const wordNames = ['The', 'black', 'cat', 'ate', 'fish'];
-            
+            const maxWeight = Math.max(...weights);
+
             barsDiv.innerHTML = wordNames.map((word, i) => {
                 const weight = weights[i];
                 const percentage = (weight * 100).toFixed(1);
                 const rawScore = scoreValues[i];
-                
+                const isHighest = weight === maxWeight && weight > 0.2;
+
+                // Color based on attention strength
+                let barColor, bgHighlight, textColor;
+                if (isHighest) {
+                    barColor = 'linear-gradient(90deg, rgba(25,135,84,0.8), rgba(25,135,84,1))';
+                    bgHighlight = 'rgba(25,135,84,0.1)';
+                    textColor = 'rgba(25,135,84,1)';
+                } else if (weight > 0.15) {
+                    barColor = 'linear-gradient(90deg, rgba(13,110,253,0.7), rgba(13,110,253,0.9))';
+                    bgHighlight = 'rgba(13,110,253,0.08)';
+                    textColor = 'rgba(13,110,253,1)';
+                } else {
+                    barColor = 'linear-gradient(90deg, rgba(108,117,125,0.4), rgba(108,117,125,0.6))';
+                    bgHighlight = 'transparent';
+                    textColor = 'var(--muted)';
+                }
+
                 return `
-                    <div style="margin: 8px 0;">
+                    <div style="margin: 8px 0; padding: 8px; background: ${bgHighlight}; border-radius: 6px; ${isHighest ? 'border: 2px solid rgba(25,135,84,0.3);' : ''}">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                            <span style="font-weight: 500;">${word} (score: ${rawScore.toFixed(2)})</span>
-                            <span style="color: var(--blue); font-weight: bold;">${percentage}%</span>
+                            <span style="font-weight: ${isHighest ? 'bold' : '500'}; color: ${textColor};">${word} ${isHighest ? '✨' : ''}</span>
+                            <span style="color: ${textColor}; font-weight: bold; font-size: ${isHighest ? '16px' : '14px'};">${percentage}%</span>
                         </div>
-                        <div style="height: 24px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; overflow: hidden;">
-                            <div style="height: 100%; width: ${percentage}%; background: linear-gradient(90deg, var(--blue), var(--indigo)); transition: width 0.3s ease;"></div>
+                        <div style="height: ${isHighest ? '28px' : '24px'}; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; overflow: hidden;">
+                            <div style="height: 100%; width: ${percentage}%; background: ${barColor}; transition: all 0.3s ease; box-shadow: ${isHighest ? '0 0 8px rgba(25,135,84,0.4)' : 'none'};"></div>
                         </div>
+                        ${isHighest ? `<div style="font-size: 11px; color: ${textColor}; margin-top: 4px;">Highest attention!</div>` : ''}
                     </div>
                 `;
             }).join('');
+
+            // Store current scores for next comparison
+            previousScores = {...scores};
         }
         
         // Initialize the calculator when shown
