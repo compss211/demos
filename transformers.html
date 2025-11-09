@@ -579,6 +579,36 @@
                     </div>
                 </div>
 
+                <div style="background: rgba(255,193,7,.08); border: 1px solid rgba(255,193,7,.3); border-radius: 8px; padding: 15px; margin-top: 20px;">
+                    <h4 style="color: var(--orange); margin: 0 0 12px;">🔍 What Are These Matrices Really Doing?</h4>
+                    <p style="margin: 0 0 12px; font-size: 14px;">The weight matrices <strong>W<sub>Q</sub></strong>, <strong>W<sub>K</sub></strong>, and <strong>W<sub>V</sub></strong> recombine your embedding dimensions into new learned feature directions.</p>
+
+                    <div style="background: var(--bg); border-radius: 6px; padding: 12px; margin: 10px 0;">
+                        <p style="margin: 0 0 8px; font-size: 13px; font-weight: 500;">Imagine your embedding has 3 features:</p>
+                        <ul style="margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.6;">
+                            <li>dimension 1 = how "animal-like" the word is</li>
+                            <li>dimension 2 = how "noun-like" it is</li>
+                            <li>dimension 3 = how "domestic vs wild" it is</li>
+                        </ul>
+                    </div>
+
+                    <p style="margin: 12px 0; font-size: 13px;"><strong>Each column of W<sub>K</sub></strong> blends these into new directions:</p>
+                    <ul style="margin: 0 0 12px; padding-left: 20px; font-size: 13px; line-height: 1.6;">
+                        <li>one column: <code style="background: rgba(0,0,0,.05); padding: 2px 6px; border-radius: 3px;">0.8×animal + 0.3×noun + 1.0×domestic</code> → "animalness focus"</li>
+                        <li>another: different blend → "grammatical function"</li>
+                        <li>another: different blend → "contextual category"</li>
+                    </ul>
+
+                    <div style="background: rgba(13,110,253,.08); border-left: 3px solid var(--blue); padding: 10px 12px; border-radius: 4px; margin-top: 12px;">
+                        <p style="margin: 0; font-size: 13px;"><strong>💡 Magnet Metaphor:</strong></p>
+                        <ul style="margin: 6px 0 0; padding-left: 20px; font-size: 13px; line-height: 1.6;">
+                            <li><strong>W<sub>Q</sub></strong>: turns each token into a magnet <em>asking</em> certain questions</li>
+                            <li><strong>W<sub>K</sub></strong>: turns each token into a magnet <em>offering</em> certain answers</li>
+                            <li>The dot product <strong>Q · K<sup>T</sup></strong> measures how well they match</li>
+                        </ul>
+                    </div>
+                </div>
+
                 <div style="background: rgba(102,16,242,.08); border: 1px solid rgba(102,16,242,.3); border-radius: 8px; padding: 15px; margin-top: 20px;">
                     <h4 style="color: var(--indigo); margin: 0 0 8px;">⚡ The Key Insight</h4>
                     <p style="margin: 0; font-size: 14px;">Each word gets THREE different representations of itself. The Query asks "what should I attend to?", Keys answer "I can provide this type of info", and Values contain "here's my actual content". The magic happens when Queries find matching Keys!</p>
