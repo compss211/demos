@@ -327,37 +327,86 @@
                 <div style="margin-top: 20px;">
                     <h4 style="color: var(--blue); margin-bottom: 10px;">The Key Innovation: Self-Attention</h4>
                     <p>Instead of processing words in order, transformers ask: <em>"For each word, which other words in the sentence should I pay attention to?"</em></p>
-                    
-                    <!-- Attention visualization -->
-                    <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin: 20px 0;">
-                        <div style="position: relative; padding: 40px 0 80px; margin: 10px auto; max-width: 500px;">
-                            <!-- Words row -->
-                            <div style="display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 2;">
-                                <span class="chip" style="background: rgba(102,16,242,0.15); border: 1px solid rgba(102,16,242,0.3); color: var(--indigo); font-size: 13px; padding: 6px 16px;">the</span>
-                                <span class="chip" style="background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: var(--red); font-size: 13px; padding: 6px 16px;">black</span>
-                                <span class="chip" style="background: rgba(255,193,7,0.15); border: 2px solid rgba(255,193,7,0.6); color: #856404; font-size: 13px; padding: 6px 16px; font-weight: bold;">cat</span>
-                                <span class="chip" style="background: rgba(102,16,242,0.2); border: 1px solid rgba(102,16,242,0.4); color: var(--indigo); font-size: 13px; padding: 6px 16px;">ate</span>
-                                <span class="chip" style="background: rgba(102,16,242,0.15); border: 1px solid rgba(102,16,242,0.3); color: var(--indigo); font-size: 13px; padding: 6px 16px;">fish</span>
+
+                    <!-- Attention Mode Toggle -->
+                    <div style="display: flex; justify-content: center; gap: 8px; margin: 15px 0;">
+                        <button class="btn matrix-toggle active" data-mode="encoder" onclick="showAttentionMode('encoder')">
+                            <span style="color: var(--emerald);">●</span> Encoder (Bidirectional)
+                        </button>
+                        <button class="btn matrix-toggle" data-mode="decoder" onclick="showAttentionMode('decoder')">
+                            <span style="color: var(--orange);">●</span> Decoder (Causal)
+                        </button>
+                    </div>
+
+                    <!-- Encoder Attention visualization (default) -->
+                    <div id="attention-encoder" class="attention-mode-demo">
+                        <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin: 20px 0;">
+                            <div style="position: relative; padding: 40px 0 80px; margin: 10px auto; max-width: 500px;">
+                                <!-- Words row -->
+                                <div style="display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 2;">
+                                    <span class="chip" style="background: rgba(102,16,242,0.15); border: 1px solid rgba(102,16,242,0.3); color: var(--indigo); font-size: 13px; padding: 6px 16px;">the</span>
+                                    <span class="chip" style="background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: var(--red); font-size: 13px; padding: 6px 16px;">black</span>
+                                    <span class="chip" style="background: rgba(255,193,7,0.15); border: 2px solid rgba(255,193,7,0.6); color: #856404; font-size: 13px; padding: 6px 16px; font-weight: bold;">cat</span>
+                                    <span class="chip" style="background: rgba(102,16,242,0.2); border: 1px solid rgba(102,16,242,0.4); color: var(--indigo); font-size: 13px; padding: 6px 16px;">ate</span>
+                                    <span class="chip" style="background: rgba(102,16,242,0.15); border: 1px solid rgba(102,16,242,0.3); color: var(--indigo); font-size: 13px; padding: 6px 16px;">fish</span>
+                                </div>
+
+                                <!-- Attention weights bar -->
+                                <div style="position: absolute; bottom: 40px; left: 0; right: 0; height: 40px; display: flex; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                    <div style="width: 10%; background: rgba(102,16,242,0.2); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 11px;">10%</div>
+                                    <div style="width: 45%; background: rgba(239,68,68,0.3); display: flex; align-items: center; justify-content: center; color: var(--red); font-weight: bold; font-size: 12px;">45%</div>
+                                    <div style="width: 0%; background: transparent;"></div>
+                                    <div style="width: 30%; background: rgba(102,16,242,0.3); display: flex; align-items: center; justify-content: center; color: var(--indigo); font-size: 11px;">30%</div>
+                                    <div style="width: 15%; background: rgba(102,16,242,0.2); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 11px;">15%</div>
+                                </div>
+
+                                <!-- Label -->
+                                <div style="position: absolute; bottom: -10px; left: 0; right: 0; text-align: center; font-size: 11px; color: var(--muted);">
+                                    "cat" can attend to ALL words (past, present, and future)
+                                </div>
                             </div>
-                            
-                            <!-- Attention weights bar -->
-                            <div style="position: absolute; bottom: 40px; left: 0; right: 0; height: 40px; display: flex; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                                <div style="width: 10%; background: rgba(102,16,242,0.2); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 11px;">10%</div>
-                                <div style="width: 45%; background: rgba(239,68,68,0.3); display: flex; align-items: center; justify-content: center; color: var(--red); font-weight: bold; font-size: 12px;">45%</div>
-                                <div style="width: 0%; background: transparent;"></div>
-                                <div style="width: 30%; background: rgba(102,16,242,0.3); display: flex; align-items: center; justify-content: center; color: var(--indigo); font-size: 11px;">30%</div>
-                                <div style="width: 15%; background: rgba(102,16,242,0.2); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 11px;">15%</div>
-                            </div>
-                            
-                            <!-- Label -->
-                            <div style="position: absolute; bottom: -10px; left: 0; right: 0; text-align: center; font-size: 11px; color: var(--muted);">
-                                "cat" simultaneously considers ALL words to understand its context
+
+                            <div style="background: rgba(25,135,84,.08); border: 1px solid rgba(25,135,84,.3); border-radius: 8px; padding: 12px; margin-top: 15px;">
+                                <p style="margin: 0; font-size: 13px;"><strong style="color: var(--emerald);">✓ Bidirectional Attention:</strong> Each word sees the entire sentence. Perfect for understanding context when you have the full input (like BERT, for classification, understanding).</p>
                             </div>
                         </div>
-                        
-                        <p style="margin: 0; font-size: 13px; color: var(--text);">
-                            The bar shows how much attention "cat" pays to each word. Notice it focuses most on "black" (45%) - its descriptor - and "ate" (30%) - the action it performs.
-                        </p>
+                    </div>
+
+                    <!-- Decoder Attention visualization (hidden) -->
+                    <div id="attention-decoder" class="attention-mode-demo" style="display: none;">
+                        <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin: 20px 0;">
+                            <div style="position: relative; padding: 40px 0 80px; margin: 10px auto; max-width: 500px;">
+                                <!-- Words row -->
+                                <div style="display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 2;">
+                                    <span class="chip" style="background: rgba(102,16,242,0.15); border: 1px solid rgba(102,16,242,0.3); color: var(--indigo); font-size: 13px; padding: 6px 16px;">the</span>
+                                    <span class="chip" style="background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: var(--red); font-size: 13px; padding: 6px 16px;">black</span>
+                                    <span class="chip" style="background: rgba(255,193,7,0.15); border: 2px solid rgba(255,193,7,0.6); color: #856404; font-size: 13px; padding: 6px 16px; font-weight: bold;">cat</span>
+                                    <span class="chip" style="background: rgba(200,200,200,0.3); border: 1px solid rgba(150,150,150,0.5); color: var(--muted); font-size: 13px; padding: 6px 16px; text-decoration: line-through;">ate</span>
+                                    <span class="chip" style="background: rgba(200,200,200,0.3); border: 1px solid rgba(150,150,150,0.5); color: var(--muted); font-size: 13px; padding: 6px 16px; text-decoration: line-through;">fish</span>
+                                </div>
+
+                                <!-- Attention weights bar -->
+                                <div style="position: absolute; bottom: 40px; left: 0; right: 0; height: 40px; display: flex; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                    <div style="width: 18.2%; background: rgba(102,16,242,0.2); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 11px;">18%</div>
+                                    <div style="width: 81.8%; background: rgba(239,68,68,0.3); display: flex; align-items: center; justify-content: center; color: var(--red); font-weight: bold; font-size: 12px;">82%</div>
+                                    <div style="width: 0%; background: transparent;"></div>
+                                    <div style="width: 0%; background: rgba(200,200,200,0.2); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 11px;">0%</div>
+                                    <div style="width: 0%; background: rgba(200,200,200,0.2); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 11px;">0%</div>
+                                </div>
+
+                                <!-- Label -->
+                                <div style="position: absolute; bottom: -10px; left: 0; right: 0; text-align: center; font-size: 11px; color: var(--muted);">
+                                    "cat" can ONLY attend to previous words (masked/causal attention)
+                                </div>
+                            </div>
+
+                            <div style="background: rgba(253,126,20,.08); border: 1px solid rgba(253,126,20,.3); border-radius: 8px; padding: 12px; margin-top: 15px;">
+                                <p style="margin: 0 0 8px; font-size: 13px;"><strong style="color: var(--orange);">⚡ Causal/Masked Attention:</strong> Each word can only see itself and previous words. Essential for text generation where you predict one word at a time (like GPT, Claude).</p>
+                                <div style="background: var(--bg); padding: 8px; border-radius: 4px; margin-top: 8px; font-size: 12px; font-family: monospace; color: var(--muted);">
+                                    Future tokens are masked with -∞ before softmax → attention weight becomes 0
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
@@ -586,8 +635,38 @@
                                 <h4 style="color: var(--red); margin: 0 0 12px;">🔍 What is W<sub>Q</sub> Really Doing?</h4>
                                 <p style="margin: 0 0 12px; font-size: 14px;"><strong>W<sub>Q</sub></strong> creates a "search pattern" by recombining embedding dimensions.</p>
 
+                                <div style="background: rgba(255,193,7,.08); border: 1px solid rgba(255,193,7,.3); border-radius: 6px; padding: 12px; margin: 10px 0;">
+                                    <p style="margin: 0 0 8px; font-size: 13px; font-weight: 600;">📊 Understanding Embedding Values</p>
+                                    <p style="margin: 0 0 8px; font-size: 12px; line-height: 1.5;">Embeddings are <strong>learned representations</strong> where each dimension captures some learned concept. The numbers are <em>relative strengths</em> - higher means stronger association. In real models, there are 768-12,288 dimensions!</p>
+                                    <div style="background: var(--bg); padding: 8px; border-radius: 4px; margin-top: 8px;">
+                                        <div style="font-size: 11px; color: var(--muted); margin-bottom: 6px;">Example comparison:</div>
+                                        <div style="display: grid; grid-template-columns: auto 1fr 1fr 1fr; gap: 8px; font-size: 11px;">
+                                            <div style="font-weight: 600;"></div>
+                                            <div style="text-align: center; font-weight: 600;">animal-like</div>
+                                            <div style="text-align: center; font-weight: 600;">noun-like</div>
+                                            <div style="text-align: center; font-weight: 600;">domestic</div>
+
+                                            <div style="font-weight: 600;">cat</div>
+                                            <div style="text-align: center; background: rgba(102,16,242,.15); padding: 2px; border-radius: 3px;">0.2</div>
+                                            <div style="text-align: center; background: rgba(102,16,242,.25); padding: 2px; border-radius: 3px;">0.8</div>
+                                            <div style="text-align: center; background: rgba(102,16,242,.15); padding: 2px; border-radius: 3px;">0.1</div>
+
+                                            <div style="font-weight: 600;">wolf</div>
+                                            <div style="text-align: center; background: rgba(102,16,242,.25); padding: 2px; border-radius: 3px;">0.7</div>
+                                            <div style="text-align: center; background: rgba(102,16,242,.25); padding: 2px; border-radius: 3px;">0.6</div>
+                                            <div style="text-align: center; background: rgba(102,16,242,.05); padding: 2px; border-radius: 3px;">-0.4</div>
+
+                                            <div style="font-weight: 600;">runs</div>
+                                            <div style="text-align: center; background: rgba(102,16,242,.05); padding: 2px; border-radius: 3px;">-0.1</div>
+                                            <div style="text-align: center; background: rgba(102,16,242,.05); padding: 2px; border-radius: 3px;">-0.3</div>
+                                            <div style="text-align: center; background: rgba(102,16,242,.15); padding: 2px; border-radius: 3px;">0.0</div>
+                                        </div>
+                                        <div style="font-size: 10px; color: var(--muted); margin-top: 6px;">→ "cat" scores high on noun-like (0.8), "wolf" scores high on animal-like (0.7) and wild (-0.4), "runs" is a verb (low noun score)</div>
+                                    </div>
+                                </div>
+
                                 <div style="background: var(--bg); border-radius: 6px; padding: 12px; margin: 10px 0;">
-                                    <p style="margin: 0 0 8px; font-size: 13px; font-weight: 500;">Your embedding has 3 features:</p>
+                                    <p style="margin: 0 0 8px; font-size: 13px; font-weight: 500;">For "cat", the embedding is:</p>
                                     <div style="display: flex; gap: 8px; margin: 8px 0;">
                                         <span style="padding: 4px 8px; background: rgba(102,16,242,.15); border-radius: 4px; font-size: 12px;">dim 1: animal-like (0.2)</span>
                                         <span style="padding: 4px 8px; background: rgba(102,16,242,.25); border-radius: 4px; font-size: 12px;">dim 2: noun-like (0.8)</span>
@@ -621,12 +700,13 @@
                                 <p style="margin: 0 0 12px; font-size: 14px;"><strong>W<sub>K</sub></strong> creates an "identity tag" by recombining embedding dimensions.</p>
 
                                 <div style="background: var(--bg); border-radius: 6px; padding: 12px; margin: 10px 0;">
-                                    <p style="margin: 0 0 8px; font-size: 13px; font-weight: 500;">Your embedding has 3 features:</p>
+                                    <p style="margin: 0 0 8px; font-size: 13px; font-weight: 500;">For "cat", the embedding is:</p>
                                     <div style="display: flex; gap: 8px; margin: 8px 0;">
                                         <span style="padding: 4px 8px; background: rgba(102,16,242,.15); border-radius: 4px; font-size: 12px;">dim 1: animal-like (0.2)</span>
                                         <span style="padding: 4px 8px; background: rgba(102,16,242,.25); border-radius: 4px; font-size: 12px;">dim 2: noun-like (0.8)</span>
                                         <span style="padding: 4px 8px; background: rgba(102,16,242,.15); border-radius: 4px; font-size: 12px;">dim 3: domestic (0.1)</span>
                                     </div>
+                                    <div style="font-size: 11px; color: var(--muted); margin-top: 6px;">These are relative strengths learned during training. Higher = stronger association.</div>
                                 </div>
 
                                 <p style="margin: 12px 0; font-size: 13px;"><strong>Row 1 of W<sub>K</sub></strong> [0.8, 1.1, 0.2] creates the first Key dimension:</p>
@@ -655,12 +735,13 @@
                                 <p style="margin: 0 0 12px; font-size: 14px;"><strong>W<sub>V</sub></strong> creates the "content package" that will be passed forward.</p>
 
                                 <div style="background: var(--bg); border-radius: 6px; padding: 12px; margin: 10px 0;">
-                                    <p style="margin: 0 0 8px; font-size: 13px; font-weight: 500;">Your embedding has 3 features:</p>
+                                    <p style="margin: 0 0 8px; font-size: 13px; font-weight: 500;">For "cat", the embedding is:</p>
                                     <div style="display: flex; gap: 8px; margin: 8px 0;">
                                         <span style="padding: 4px 8px; background: rgba(102,16,242,.15); border-radius: 4px; font-size: 12px;">dim 1: animal-like (0.2)</span>
                                         <span style="padding: 4px 8px; background: rgba(102,16,242,.25); border-radius: 4px; font-size: 12px;">dim 2: noun-like (0.8)</span>
                                         <span style="padding: 4px 8px; background: rgba(102,16,242,.15); border-radius: 4px; font-size: 12px;">dim 3: domestic (0.1)</span>
                                     </div>
+                                    <div style="font-size: 11px; color: var(--muted); margin-top: 6px;">These are relative strengths learned during training. Higher = stronger association.</div>
                                 </div>
 
                                 <p style="margin: 12px 0; font-size: 13px;"><strong>Row 1 of W<sub>V</sub></strong> [0.6, 0.9, 1.1] creates the first Value dimension:</p>
@@ -1192,6 +1273,23 @@
                 btn.classList.remove('active');
             });
             document.querySelector(`[data-matrix="${matrixType}"]`).classList.add('active');
+        }
+
+        // Attention mode toggle functionality
+        function showAttentionMode(mode) {
+            // Hide all attention mode demos
+            document.querySelectorAll('.attention-mode-demo').forEach(demo => {
+                demo.style.display = 'none';
+            });
+
+            // Show selected attention mode
+            document.getElementById(`attention-${mode}`).style.display = 'block';
+
+            // Update button states
+            document.querySelectorAll('[data-mode]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
         }
     </script>
 </body>
