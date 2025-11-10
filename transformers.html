@@ -878,15 +878,6 @@
                 </div>
 
                 <div class="goal" style="margin-top: 20px;">
-                    <p><strong>Understanding Q·K Dot Products:</strong></p>
-                    <p style="font-size: 14px; color: var(--muted); margin-bottom: 8px;">The attention score between two words is calculated as: <code style="background: var(--panel); padding: 2px 6px; border-radius: 4px;">attention_score = Query_word1 · Key_word2</code></p>
-
-                    <div style="background: rgba(102,16,242,.08); border: 1px solid rgba(102,16,242,.3); border-radius: 8px; padding: 12px; margin-bottom: 15px;">
-                        <p style="margin: 0; font-size: 13px; color: var(--indigo);"><strong>Real Scale:</strong> In actual transformers like GPT-4, Q, K, V vectors are typically 64-128 dimensions each (we're using 3D for simplicity). Large models can have 12,288 dimensions!</p>
-                    </div>
-                </div>
-
-                <div class="goal" style="margin-top: 20px;">
                     <h3>What Happens Next: Q · K<sup>T</sup></h3>
                     <p style="margin: 0 0 15px;">Now that we have Query, Key, and Value vectors for each word, we use them to calculate <strong>attention scores</strong> through dot products.</p>
 
