@@ -1255,12 +1255,7 @@
                 scores[word] = dotProduct(queryVector, keyVectors[word]);
             });
 
-            // Find max score for highlighting
-            const maxScore = Math.max(...Object.values(scores));
-            const minScore = Math.min(...Object.values(scores));
-            const scoreRange = maxScore - minScore;
-
-            // Show calculations with dynamic highlighting
+            // Show calculations with dimension-by-dimension breakdown
             const calculationsDiv = document.getElementById('calculations');
             calculationsDiv.innerHTML = words.map(word => {
                 const keyVec = keyVectors[word];
@@ -1268,42 +1263,43 @@
                 const prevScore = previousScores[word] || score;
                 const scoreChange = score - prevScore;
 
-                // Calculate intensity based on score value (0 to 1 scale)
-                const intensity = scoreRange > 0 ? (score - minScore) / scoreRange : 0.5;
-
-                // Determine colors based on score magnitude
-                let bgColor, textColor, borderColor;
-                if (intensity > 0.66) {
-                    // High scores - strong green
-                    bgColor = 'rgba(25,135,84,0.2)';
-                    textColor = 'rgba(25,135,84,1)';
-                    borderColor = 'rgba(25,135,84,0.5)';
-                } else if (intensity > 0.33) {
-                    // Medium scores - blue
-                    bgColor = 'rgba(13,110,253,0.15)';
-                    textColor = 'rgba(13,110,253,1)';
-                    borderColor = 'rgba(13,110,253,0.4)';
-                } else {
-                    // Low scores - muted
-                    bgColor = 'rgba(108,117,125,0.1)';
-                    textColor = 'rgba(108,117,125,1)';
-                    borderColor = 'rgba(108,117,125,0.3)';
-                }
+                // Calculate per-dimension contributions
+                const contributions = queryVector.map((qVal, i) => qVal * keyVec[i]);
 
                 // Add indicator for score changes
                 let changeIndicator = '';
                 if (Math.abs(scoreChange) > 0.01) {
                     if (scoreChange > 0) {
-                        changeIndicator = `<span style="color: #198754; margin-left: 8px; font-size: 14px;">↑ +${scoreChange.toFixed(2)}</span>`;
+                        changeIndicator = `<span style="color: #198754; margin-left: 8px; font-size: 12px;">↑ +${scoreChange.toFixed(2)}</span>`;
                     } else {
-                        changeIndicator = `<span style="color: #dc3545; margin-left: 8px; font-size: 14px;">↓ ${scoreChange.toFixed(2)}</span>`;
+                        changeIndicator = `<span style="color: #dc3545; margin-left: 8px; font-size: 12px;">↓ ${scoreChange.toFixed(2)}</span>`;
                     }
                 }
 
-                const scoreDisplay = `<strong style="color: ${textColor}; font-size: 16px; padding: 3px 8px; background: ${bgColor}; border-radius: 4px; border: 1px solid ${borderColor};">${score.toFixed(2)}</strong>`;
+                // Build dimension breakdown
+                const dimensionBreakdown = contributions.map((contrib, i) => {
+                    const isPositive = contrib >= 0;
+                    const color = isPositive ? 'rgba(25,135,84,0.7)' : 'rgba(220,53,69,0.7)';
+                    const bgColor = isPositive ? 'rgba(25,135,84,0.08)' : 'rgba(220,53,69,0.08)';
 
-                return `<div style="padding: 8px; margin: 4px 0; background: var(--panel); border-radius: 6px; border-left: 3px solid ${borderColor};">
-                    Q_cat · K_${word} = [${queryVector.map(v => v.toFixed(2)).join(', ')}] · [${keyVec.join(', ')}] = ${scoreDisplay}${changeIndicator}
+                    return `<div style="font-size: 11px; padding: 3px 6px; background: ${bgColor}; border-radius: 3px; display: inline-block; margin: 2px;">
+                        <span style="color: var(--muted);">dim${i+1}:</span>
+                        <span style="color: ${color}; font-weight: 600;">${queryVector[i].toFixed(2)}</span> ×
+                        <span style="color: ${color}; font-weight: 600;">${keyVec[i].toFixed(2)}</span> =
+                        <span style="color: ${color}; font-weight: bold;">${contrib.toFixed(2)}</span>
+                    </div>`;
+                }).join(' ');
+
+                const totalColor = score >= 0 ? '#198754' : '#dc3545';
+
+                return `<div style="padding: 10px; margin: 6px 0; background: var(--panel); border-radius: 6px; border: 1px solid var(--border);">
+                    <div style="font-family: monospace; font-size: 13px; margin-bottom: 6px;">
+                        <strong>Q_cat · K_${word}</strong> =
+                        <strong style="color: ${totalColor}; font-size: 15px;">${score.toFixed(2)}</strong>${changeIndicator}
+                    </div>
+                    <div style="margin-top: 6px;">
+                        ${dimensionBreakdown}
+                    </div>
                 </div>`;
             }).join('');
             
@@ -1321,35 +1317,23 @@
             barsDiv.innerHTML = wordNames.map((word, i) => {
                 const weight = weights[i];
                 const percentage = (weight * 100).toFixed(1);
-                const rawScore = scoreValues[i];
-                const isHighest = weight === maxWeight && weight > 0.2;
+                const isHighest = weight === maxWeight;
 
-                // Color based on attention strength
-                let barColor, bgHighlight, textColor;
-                if (isHighest) {
-                    barColor = 'linear-gradient(90deg, rgba(25,135,84,0.8), rgba(25,135,84,1))';
-                    bgHighlight = 'rgba(25,135,84,0.1)';
-                    textColor = 'rgba(25,135,84,1)';
-                } else if (weight > 0.15) {
-                    barColor = 'linear-gradient(90deg, rgba(13,110,253,0.7), rgba(13,110,253,0.9))';
-                    bgHighlight = 'rgba(13,110,253,0.08)';
-                    textColor = 'rgba(13,110,253,1)';
-                } else {
-                    barColor = 'linear-gradient(90deg, rgba(108,117,125,0.4), rgba(108,117,125,0.6))';
-                    bgHighlight = 'transparent';
-                    textColor = 'var(--muted)';
-                }
+                // Use consistent blue coloring with intensity based on actual weight
+                const intensity = Math.min(weight / 0.5, 1); // Cap at 50% weight for full intensity
+                const barOpacity = 0.5 + (intensity * 0.5); // Range from 0.5 to 1.0
+                const barColor = `rgba(13,110,253,${barOpacity})`;
 
                 return `
-                    <div style="margin: 8px 0; padding: 8px; background: ${bgHighlight}; border-radius: 6px; ${isHighest ? 'border: 2px solid rgba(25,135,84,0.3);' : ''}">
+                    <div style="margin: 8px 0; padding: 8px; background: ${isHighest ? 'rgba(13,110,253,0.08)' : 'transparent'}; border-radius: 6px; ${isHighest ? 'border: 2px solid rgba(13,110,253,0.3);' : ''}">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                            <span style="font-weight: ${isHighest ? 'bold' : '500'}; color: ${textColor};">${word}</span>
-                            <span style="color: ${textColor}; font-weight: bold; font-size: ${isHighest ? '16px' : '14px'};">${percentage}%</span>
+                            <span style="font-weight: ${isHighest ? 'bold' : '500'}; color: var(--text);">${word}</span>
+                            <span style="color: var(--text); font-weight: ${isHighest ? 'bold' : '600'}; font-size: ${isHighest ? '15px' : '14px'};">${percentage}%</span>
                         </div>
-                        <div style="height: ${isHighest ? '28px' : '24px'}; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; overflow: hidden;">
-                            <div style="height: 100%; width: ${percentage}%; background: ${barColor}; transition: all 0.3s ease; box-shadow: ${isHighest ? '0 0 8px rgba(25,135,84,0.4)' : 'none'};"></div>
+                        <div style="height: 24px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; overflow: hidden;">
+                            <div style="height: 100%; width: ${percentage}%; background: ${barColor}; transition: all 0.3s ease;"></div>
                         </div>
-                        ${isHighest ? `<div style="font-size: 11px; color: ${textColor}; margin-top: 4px;">Highest attention!</div>` : ''}
+                        ${isHighest ? `<div style="font-size: 11px; color: rgba(13,110,253,0.8); margin-top: 4px;">Highest attention</div>` : ''}
                     </div>
                 `;
             }).join('');
