@@ -1002,41 +1002,19 @@
                     <div id="attention-bars" style="margin-top: 10px;"></div>
                 </div>
             </div>
-            <button class="btn btn-primary" onclick="showStep5()">Attention patterns →</button>
-        </div>
-
-        <!-- Step 6: Interactive Demo -->
-        <div class="stage hidden" id="step5">
-            <h2><span class="step-number">6</span>Try It Yourself!</h2>
-            <div class="explanation">
-                Click on any word to see which words it pays attention to. The thickness and color of the lines show attention strength.
-            </div>
-            <div class="card">
-            <p><strong>Click a word to see its attention pattern:</strong></p>
-            <svg id="attention-viz" width="600" height="200" style="display: block; margin: 20px auto;">
-                <!-- Will be populated by JavaScript -->
-            </svg>
-                <div id="demo-words" style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
-                    <div class="chip" onclick="showAttentionPattern(0)">The</div>
-                    <div class="chip" onclick="showAttentionPattern(1)">black</div>
-                    <div class="chip" onclick="showAttentionPattern(2)">cat</div>
-                    <div class="chip" onclick="showAttentionPattern(3)">ate</div>
-                    <div class="chip" onclick="showAttentionPattern(4)">fish</div>
-                </div>
-        </div>
             <button class="btn btn-primary" onclick="showSummary()">See Summary →</button>
-    </div>
+        </div>
 
         <!-- Summary -->
         <div class="intro hidden" id="summary">
             <h2>✓ Congratulations! You Understand Attention!</h2>
             <div class="goal" style="background: rgba(25,135,84,.1); border-color: rgba(25,135,84,.3);">
-                <h3 style="color: var(--emerald);">🎉 Key Takeaways</h3>
+                <h3 style="color: var(--emerald);">Key Takeaways</h3>
                 <ul style="margin: 0; padding-left: 20px;">
                     <li>Attention helps models understand context by focusing on relevant words</li>
-                    <li>Each word has Query, Key, and Value representations</li>
-                    <li>Attention scores determine how much to focus on each word</li>
-                    <li>The attention matrix shows all word relationships at once</li>
+                    <li>Each word has Query, Key, and Value representations created through learned weight matrices</li>
+                    <li>Query-Key dot products determine attention scores, with contributions from each dimension</li>
+                    <li>Softmax converts dot product scores into normalized attention weights</li>
                     <li>This mechanism allows transformers to capture complex language patterns!</li>
                 </ul>
             </div>
@@ -1096,117 +1074,6 @@
             }
         }
 
-
-        function showStep5() {
-            document.getElementById('step5').classList.remove('hidden');
-            document.getElementById('step5').classList.add('fade-in');
-            currentStep = 7;
-            updateProgress(95);
-            document.getElementById('step5').scrollIntoView({ behavior: 'smooth' });
-            initAttentionVisualization();
-        }
-
-        function initAttentionVisualization() {
-            const svg = document.getElementById('attention-viz');
-            svg.innerHTML = `
-                <text x="300" y="100" text-anchor="middle" fill="#999">
-                    Click a word below to see attention patterns
-                </text>
-            `;
-        }
-
-        function showAttentionPattern(wordIndex) {
-            const words = ['The', 'black', 'cat', 'ate', 'fish'];
-            const attentionWeights = [
-                [0.3, 0.1, 0.1, 0.1, 0.05],  // The
-                [0.1, 0.8, 0.7, 0.2, 0.1],   // black (attends to itself and cat)
-                [0.15, 0.7, 0.9, 0.4, 0.3],  // cat (attends to black, itself, ate)
-                [0.1, 0.3, 0.6, 0.8, 0.7],   // ate (attends to cat, itself, fish)
-                [0.05, 0.1, 0.3, 0.7, 0.9]   // fish (attends to ate and itself)
-            ];
-            
-            const svg = document.getElementById('attention-viz');
-            svg.innerHTML = '';
-            
-            // Draw words at top
-            words.forEach((word, i) => {
-                const x = 60 + i * 110;
-                const y = 50;
-                
-                // Word box
-                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                rect.setAttribute('x', x - 30);
-                rect.setAttribute('y', y - 20);
-                rect.setAttribute('width', 60);
-                rect.setAttribute('height', 40);
-                rect.setAttribute('rx', 5);
-                rect.setAttribute('fill', i === wordIndex ? '#0d6efd' : '#f8f9fa');
-                rect.setAttribute('stroke', '#ddd');
-                svg.appendChild(rect);
-                
-                // Word text
-                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                text.setAttribute('x', x);
-                text.setAttribute('y', y + 5);
-                text.setAttribute('text-anchor', 'middle');
-                text.setAttribute('fill', i === wordIndex ? 'white' : '#333');
-                text.setAttribute('font-weight', 'bold');
-                text.textContent = word;
-                svg.appendChild(text);
-            });
-            
-            // Draw attention lines from selected word
-            const fromX = 60 + wordIndex * 110;
-            const fromY = 70;
-            
-            words.forEach((word, i) => {
-                const toX = 60 + i * 110;
-                const toY = 150;
-                const weight = attentionWeights[wordIndex][i];
-                
-                // Draw line
-                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                line.setAttribute('x1', fromX);
-                line.setAttribute('y1', fromY);
-                line.setAttribute('x2', toX);
-                line.setAttribute('y2', toY);
-                line.setAttribute('stroke', '#0d6efd');
-                line.setAttribute('stroke-width', weight * 8);
-                line.setAttribute('opacity', weight);
-                svg.appendChild(line);
-                
-                // Draw target word
-                const targetRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                targetRect.setAttribute('x', toX - 30);
-                targetRect.setAttribute('y', toY - 20);
-                targetRect.setAttribute('width', 60);
-                targetRect.setAttribute('height', 40);
-                targetRect.setAttribute('rx', 5);
-                targetRect.setAttribute('fill', 'white');
-                targetRect.setAttribute('stroke', '#0d6efd');
-                targetRect.setAttribute('stroke-width', weight * 3);
-                svg.appendChild(targetRect);
-                
-                const targetText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                targetText.setAttribute('x', toX);
-                targetText.setAttribute('y', toY + 5);
-                targetText.setAttribute('text-anchor', 'middle');
-                targetText.setAttribute('fill', '#333');
-                targetText.textContent = word;
-                svg.appendChild(targetText);
-                
-                // Weight label
-                const weightText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                weightText.setAttribute('x', (fromX + toX) / 2);
-                weightText.setAttribute('y', (fromY + toY) / 2);
-                weightText.setAttribute('text-anchor', 'middle');
-                weightText.setAttribute('fill', '#0d6efd');
-                weightText.setAttribute('font-size', '12');
-                weightText.setAttribute('font-weight', 'bold');
-                weightText.textContent = weight.toFixed(1);
-                svg.appendChild(weightText);
-            });
-        }
 
         function showSummary() {
             document.getElementById('summary').classList.remove('hidden');
